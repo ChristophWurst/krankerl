@@ -7,3 +7,10 @@ pub struct App {
 pub struct Category {
     pub id: String,
 }
+
+#[derive(Debug, Serialize)]
+pub struct Release {
+    pub download: String,
+    pub signature: String,
+    pub nightly: bool,
+}
