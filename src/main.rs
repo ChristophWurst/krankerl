@@ -53,7 +53,11 @@ fn main() {
         let work = get_apps_and_releases(&core.handle(), &version.to_owned()).map(|apps| {
             println!("found {} apps for {}:", apps.len(), version);
             for app in apps {
-                println!("- {}", app.id)
+                if app.isFeatured {
+                    println!("- {} (featured)", app.id);
+                } else {
+                    println!("- {}", app.id);
+                }
             }
         });
 

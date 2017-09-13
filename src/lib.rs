@@ -8,7 +8,7 @@ extern crate tokio_core;
 
 mod models;
 
-use models::{App, Category, Release};
+use models::{App, Category, NewRelease};
 use futures::Stream;
 use futures::future::Future;
 use hyper::{Client, Method, Request};
@@ -76,7 +76,7 @@ pub fn release_app(
     let uri = "https://apps.nextcloud.com/api/v1/apps/releases"
         .parse()
         .expect("to parse");
-    let release = Release {
+    let release = NewRelease {
         download: url.to_owned(),
         signature: get_app_signature(app_id).unwrap(),
         nightly: is_nightly,
