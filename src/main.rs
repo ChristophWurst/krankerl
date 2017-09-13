@@ -7,7 +7,7 @@ extern crate tokio_core;
 
 use docopt::Docopt;
 use futures::future::Future;
-use krankerl::get_apps_and_releases;
+use krankerl::*;
 use tokio_core::reactor::Core;
 
 const USAGE: &'static str = "
@@ -15,6 +15,7 @@ Krankerl.
 
 Usage:
   krankerl list apps <version>
+  krankerl list categories
   krankerl --version
 
 Options:
@@ -24,9 +25,10 @@ Options:
 
 #[derive(Debug, Deserialize)]
 struct Args {
-    arg_version: String,
+    arg_version: Option<String>,
     cmd_list: bool,
     cmd_apps: bool,
+    cmd_categories: bool,
 }
 
 fn main() {
@@ -37,10 +39,20 @@ fn main() {
     let mut core = Core::new().unwrap();
 
     if args.cmd_list && args.cmd_apps {
-        let work = get_apps_and_releases(&core.handle(), &args.arg_version).map(|apps| {
-            println!("found {} apps for {}:", apps.len(), args.arg_version);
+        let version = &args.arg_version.unwrap();
+        let work = get_apps_and_releases(&core.handle(), &version.to_owned()).map(|apps| {
+            println!("found {} apps for {}:", apps.len(), version);
             for app in apps {
                 println!("- {}", app.id)
+            }
+        });
+
+        core.run(work).unwrap();
+    } else if args.cmd_list && args.cmd_categories {
+        let work = get_categories(&core.handle()).map(|cats| {
+            println!("found {} categories:", cats.len());
+            for cat in cats {
+                println!("- {}", cat.id)
             }
         });
 

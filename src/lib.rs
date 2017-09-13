@@ -8,13 +8,35 @@ extern crate tokio_core;
 
 mod models;
 
-use models::App;
+use models::{App, Category};
 use futures::Stream;
 use futures::future::Future;
 use hyper::Client;
 use hyper_tls::HttpsConnector;
 use std::vec::Vec;
 use tokio_core::reactor::Handle;
+
+pub fn get_categories(
+    handle: &Handle
+) -> Box<Future<Item = Vec<Category>, Error = &'static str>> {
+    let uri = "https://apps.nextcloud.com/api/v1/categories.json"
+        .parse()
+        .expect("to parse");
+    let client = Client::configure()
+        .connector(HttpsConnector::new(4, handle).unwrap())
+        .build(handle);
+    let work = client
+        .get(uri)
+        .and_then(|res| {
+            res.body().concat2().and_then(move |body| {
+                let apps: Vec<Category> = serde_json::from_slice(&body).unwrap();
+                Ok(apps)
+            })
+        })
+        .map_err(|_| "whoops");
+
+    Box::new(work)
+}
 
 pub fn get_apps_and_releases(
     handle: &Handle,
