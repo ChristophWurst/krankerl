@@ -66,7 +66,7 @@ fn get_app_signature(_: &String) -> Result<String, ()> {
     Ok("xxx".to_owned())
 }
 
-pub fn release_app(
+pub fn publish_app(
     handle: &Handle,
     app_id: &String,
     url: &String,

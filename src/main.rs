@@ -19,7 +19,7 @@ Krankerl.
 Usage:
   krankerl list apps <version>
   krankerl list categories
-  krankerl release (--nightly) <id> <url>
+  krankerl publish (--nightly) <id> <url>
   krankerl --version
 
 Options:
@@ -35,7 +35,7 @@ struct Args {
     cmd_list: bool,
     cmd_apps: bool,
     cmd_categories: bool,
-    cmd_release: bool,
+    cmd_publish: bool,
     flag_nightly: bool,
 }
 
@@ -71,13 +71,13 @@ fn main() {
         });
 
         core.run(work).unwrap();
-    } else if args.cmd_release {
+    } else if args.cmd_publish {
         let app_id = args.arg_id.unwrap();
         let url = args.arg_url.unwrap();
         let is_nightly = args.flag_nightly;
         let api_token = env::var("TOKEN").unwrap();
 
-        let work = release_app(&core.handle(), &app_id, &url, is_nightly, &api_token);
+        let work = publish_app(&core.handle(), &app_id, &url, is_nightly, &api_token);
 
         core.run(work).unwrap();
     }
