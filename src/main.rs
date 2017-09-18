@@ -9,6 +9,7 @@ extern crate tokio_core;
 use docopt::Docopt;
 use futures::Future;
 use krankerl::config;
+use krankerl::{get_signature, package_app};
 use nextcloud_appstore::*;
 use tokio_core::reactor::Core;
 
@@ -19,6 +20,7 @@ Usage:
   krankerl list apps <version>
   krankerl list categories
   krankerl login [--appstore | --github] <token>
+  krankerl package <id>
   krankerl publish (--nightly) <id> <url>
   krankerl --version
 
@@ -37,6 +39,7 @@ struct Args {
     cmd_categories: bool,
     cmd_list: bool,
     cmd_login: bool,
+    cmd_package: bool,
     cmd_publish: bool,
     flag_appstore: bool,
     flag_github: bool,
@@ -80,16 +83,24 @@ fn main() {
             config::set_appstore_token(&token).expect("could not save appstore token");
             println!("App store token saved.");
         }
+    } else if args.cmd_package {
+        let app_id = args.arg_id.unwrap();
+
+        package_app(&app_id).expect("could not package app");
+        println!("Packaged app {}.", app_id);
     } else if args.cmd_publish {
         let app_id = args.arg_id.unwrap();
         let url = args.arg_url.unwrap();
         let is_nightly = args.flag_nightly;
 
+        package_app(&app_id).expect("could not package app");
+        let sig = get_signature(&app_id).expect("could not get signature");
+
         let config = config::get_config().expect("could not load config");
         assert!(config.appstore_token.is_some());
         let api_token = config.appstore_token.unwrap();
 
-        let work = publish_app(&core.handle(), &app_id, &url, is_nightly, &api_token);
+        let work = publish_app(&core.handle(), &url, is_nightly, &sig, &api_token);
 
         core.run(work).unwrap();
     }
