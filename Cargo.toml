@@ -5,11 +5,12 @@ authors = ["Christoph Wurst <christoph@winzerhof-wurst.at>"]
 
 [dependencies]
 docopt = "0.8"
-dotenv = "0.10.1"
 futures = "0.1"
 hyper = "0.11"
 hyper-tls = "0.1"
+nextcloud_appstore = { path = "../nextcloud_appstore" }
 serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0"
 tokio-core = "0.1"
+xdg = "2.1.0"

@@ -1,16 +1,15 @@
 extern crate docopt;
-extern crate dotenv;
 extern crate futures;
+extern crate nextcloud_appstore;
 extern crate krankerl;
 #[macro_use]
 extern crate serde_derive;
 extern crate tokio_core;
 
 use docopt::Docopt;
-use dotenv::dotenv;
-use futures::future::Future;
-use krankerl::*;
-use std::env;
+use futures::Future;
+use krankerl::config;
+use nextcloud_appstore::*;
 use tokio_core::reactor::Core;
 
 const USAGE: &'static str = "
@@ -19,6 +18,7 @@ Krankerl.
 Usage:
   krankerl list apps <version>
   krankerl list categories
+  krankerl login [--appstore | --github] <token>
   krankerl publish (--nightly) <id> <url>
   krankerl --version
 
@@ -30,17 +30,20 @@ Options:
 #[derive(Debug, Deserialize)]
 struct Args {
     arg_id: Option<String>,
+    arg_token: Option<String>,
     arg_url: Option<String>,
     arg_version: Option<String>,
-    cmd_list: bool,
     cmd_apps: bool,
     cmd_categories: bool,
+    cmd_list: bool,
+    cmd_login: bool,
     cmd_publish: bool,
+    flag_appstore: bool,
+    flag_github: bool,
     flag_nightly: bool,
 }
 
 fn main() {
-    dotenv().ok();
     let args: Args = Docopt::new(USAGE)
         .and_then(|d| d.deserialize())
         .unwrap_or_else(|e| e.exit());
@@ -71,11 +74,20 @@ fn main() {
         });
 
         core.run(work).unwrap();
+    } else if args.cmd_login {
+        if args.flag_appstore {
+            let token = args.arg_token.unwrap();
+            config::set_appstore_token(&token).expect("could not save appstore token");
+            println!("App store token saved.");
+        }
     } else if args.cmd_publish {
         let app_id = args.arg_id.unwrap();
         let url = args.arg_url.unwrap();
         let is_nightly = args.flag_nightly;
-        let api_token = env::var("TOKEN").unwrap();
+
+        let config = config::get_config().expect("could not load config");
+        assert!(config.appstore_token.is_some());
+        let api_token = config.appstore_token.unwrap();
 
         let work = publish_app(&core.handle(), &app_id, &url, is_nightly, &api_token);
 
