@@ -102,6 +102,8 @@ fn main() {
 
         let work = publish_app(&core.handle(), &url, is_nightly, &sig, &api_token);
 
-        core.run(work).unwrap();
+        core.run(work).unwrap_or_else(|e| {
+            println!("an error occured: {}", e);
+        });
     }
 }
