@@ -1,7 +1,7 @@
 extern crate docopt;
 extern crate futures;
-extern crate nextcloud_appstore;
 extern crate krankerl;
+extern crate nextcloud_appstore;
 #[macro_use]
 extern crate serde_derive;
 extern crate tokio_core;
@@ -10,7 +10,9 @@ use docopt::Docopt;
 use futures::Future;
 use krankerl::config;
 use krankerl::{get_signature, package_app};
+use krankerl::sign::sign_package;
 use nextcloud_appstore::*;
+use std::path::Path;
 use tokio_core::reactor::Core;
 
 const USAGE: &'static str = "
@@ -22,6 +24,7 @@ Usage:
   krankerl login [--appstore | --github] <token>
   krankerl package <id>
   krankerl publish (--nightly) <id> <url>
+  krankerl sign <keypath> <packagepath>
   krankerl --version
 
 Options:
@@ -32,6 +35,8 @@ Options:
 #[derive(Debug, Deserialize)]
 struct Args {
     arg_id: Option<String>,
+    arg_keypath: Option<String>,
+    arg_packagepath: Option<String>,
     arg_token: Option<String>,
     arg_url: Option<String>,
     arg_version: Option<String>,
@@ -41,6 +46,7 @@ struct Args {
     cmd_login: bool,
     cmd_package: bool,
     cmd_publish: bool,
+    cmd_sign: bool,
     flag_appstore: bool,
     flag_github: bool,
     flag_nightly: bool,
@@ -105,5 +111,15 @@ fn main() {
         core.run(work).unwrap_or_else(|e| {
             println!("an error occured: {}", e);
         });
+    } else if args.cmd_sign {
+        let path1 = args.arg_keypath.unwrap();
+        let path2 = args.arg_packagepath.unwrap();
+        let key_path = Path::new(&path1);
+        let package_path = Path::new(&path2);
+
+        match sign_package(&key_path, &package_path) {
+            Ok(signature) => println!("Package signature: {}", signature),
+            Err(err) => println!("Signing failed: {}", err),
+        };
     }
 }

@@ -1,9 +1,12 @@
+extern crate base64;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
+extern crate openssl;
 extern crate xdg;
 
 pub mod config;
+pub mod sign;
 
 use std::fs::File;
 use std::io::prelude::*;
