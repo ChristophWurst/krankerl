@@ -17,7 +17,7 @@ use std::path::PathBuf;
 use tokio_core::reactor::Core;
 
 const USAGE: &'static str = "
-Krankerl.
+Krankerl. A CLI tool for the Nextcloud app store.
 
 Usage:
   krankerl list apps <version>
@@ -51,6 +51,7 @@ struct Args {
     flag_appstore: bool,
     flag_github: bool,
     flag_nightly: bool,
+    flag_version: bool,
 }
 
 fn main() {
@@ -129,5 +130,7 @@ fn main() {
         core.run(work).unwrap_or_else(|e| {
             println!("an error occured: {}", e);
         });
+    } else if args.flag_version {
+        println!("v0.1.1");
     }
 }
