@@ -1,8 +1,10 @@
 extern crate base64;
+extern crate futures;
+extern crate futures_cpupool;
+extern crate openssl;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
-extern crate openssl;
 extern crate xdg;
 
 pub mod config;
@@ -26,8 +28,10 @@ pub fn package_app(app_id: &String) -> Result<(), ()> {
 }
 
 pub fn get_signature(app_id: &String) -> Option<String> {
-    let mut file = File::open(format!("./build/artifacts/{}.sig", app_id)).expect("could not open signature file");
+    let mut file = File::open(format!("./build/artifacts/{}.sig", app_id))
+        .expect("could not open signature file");
     let mut contents = String::new();
-    file.read_to_string(&mut contents).expect("could not read signature file");
+    file.read_to_string(&mut contents)
+        .expect("could not read signature file");
     Some(contents)
 }

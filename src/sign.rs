@@ -1,4 +1,6 @@
 use base64::encode;
+use futures::future;
+use futures_cpupool;
 use openssl;
 use openssl::sign::Signer;
 use openssl::pkey::PKey;
@@ -9,7 +11,7 @@ use std::fs::File;
 use std::convert::From;
 use std::io::{self, copy, BufReader};
 use std::io::prelude::*;
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 #[derive(Debug)]
 pub enum SignError {
@@ -73,4 +75,17 @@ pub fn sign_package(key_path: &Path, file_path: &Path) -> Result<String, SignErr
     let signature = signer.finish().unwrap();
 
     Ok(encode(&signature))
+}
+
+pub fn sign_package_async(
+    pool_builder: &mut futures_cpupool::Builder,
+    key_path: PathBuf,
+    file_path: PathBuf,
+) -> futures_cpupool::CpuFuture<String, SignError> {
+    let pool = pool_builder.create();
+
+    pool.spawn_fn(move || match sign_package(&key_path, &file_path) {
+        Ok(signature) => return future::ok(signature),
+        Err(err) => return future::err(err),
+    })
 }

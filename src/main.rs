@@ -1,5 +1,6 @@
 extern crate docopt;
 extern crate futures;
+extern crate futures_cpupool;
 extern crate krankerl;
 extern crate nextcloud_appstore;
 #[macro_use]
@@ -10,9 +11,9 @@ use docopt::Docopt;
 use futures::Future;
 use krankerl::config;
 use krankerl::{get_signature, package_app};
-use krankerl::sign::sign_package;
+use krankerl::sign::sign_package_async;
 use nextcloud_appstore::*;
-use std::path::Path;
+use std::path::PathBuf;
 use tokio_core::reactor::Core;
 
 const USAGE: &'static str = "
@@ -58,6 +59,8 @@ fn main() {
         .unwrap_or_else(|e| e.exit());
 
     let mut core = Core::new().unwrap();
+    let mut pool_builder = futures_cpupool::Builder::new();
+    pool_builder.pool_size(2);
 
     if args.cmd_list && args.cmd_apps {
         let version = &args.arg_version.unwrap();
@@ -114,12 +117,17 @@ fn main() {
     } else if args.cmd_sign {
         let path1 = args.arg_keypath.unwrap();
         let path2 = args.arg_packagepath.unwrap();
-        let key_path = Path::new(&path1);
-        let package_path = Path::new(&path2);
+        let key_path = PathBuf::from(&path1);
+        let package_path = PathBuf::from(&path2);
 
-        match sign_package(&key_path, &package_path) {
-            Ok(signature) => println!("Package signature: {}", signature),
-            Err(err) => println!("Signing failed: {}", err),
-        };
+        let signing = sign_package_async(&mut pool_builder, key_path, package_path);
+        let work = signing.and_then(|signature| {
+            println!("Package signature: {}", signature);
+            futures::future::ok(())
+        });
+
+        core.run(work).unwrap_or_else(|e| {
+            println!("an error occured: {}", e);
+        });
     }
 }
