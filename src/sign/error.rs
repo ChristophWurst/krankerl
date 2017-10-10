@@ -9,6 +9,7 @@ use walkdir;
 pub enum SignError {
     Io(io::Error),
     Ssl(openssl::error::ErrorStack),
+    Other(String),
 }
 
 impl fmt::Display for SignError {
@@ -16,6 +17,7 @@ impl fmt::Display for SignError {
         match *self {
             SignError::Io(ref err) => write!(f, "IO error: {}", err),
             SignError::Ssl(ref err) => write!(f, "SSL error: {}", err),
+            SignError::Other(ref err) => write!(f, "Unknown error: {}", err),
         }
     }
 }
@@ -25,6 +27,7 @@ impl error::Error for SignError {
         match *self {
             SignError::Io(ref err) => err.description(),
             SignError::Ssl(ref err) => err.description(),
+            SignError::Other(_) => "Unknown error",
         }
     }
 
@@ -32,6 +35,7 @@ impl error::Error for SignError {
         match *self {
             SignError::Io(ref err) => Some(err),
             SignError::Ssl(ref err) => Some(err),
+            SignError::Other(_) => None,
         }
     }
 }

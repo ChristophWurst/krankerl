@@ -119,10 +119,12 @@ fn main() {
             println!("an error occured: {}", e);
         });
     } else if args.cmd_sign && args.flag_app {
-        let path = args.arg_packagepath.unwrap();
-        let path = PathBuf::from(&path);
+        let key_path = args.arg_keypath.unwrap();
+        let key_path = PathBuf::from(&key_path);
+        let package_path = args.arg_packagepath.unwrap();
+        let package_path = PathBuf::from(&package_path);
 
-        match sign_app(&path) {
+        match sign_app(&key_path, &package_path) {
             Ok(()) => println!("App signed successfully"),
             Err(err) => println!("Error signing app: {}", err),
         };
