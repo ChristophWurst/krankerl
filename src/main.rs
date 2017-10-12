@@ -8,12 +8,9 @@ extern crate serde_derive;
 extern crate tokio_core;
 
 use docopt::Docopt;
-use futures::Future;
-use krankerl::config;
-use krankerl::{get_signature, package_app};
-use krankerl::sign::sign_package_async;
-use nextcloud_appstore::*;
-use std::path::PathBuf;
+use futures::{future, Future};
+use krankerl::*;
+use krankerl::packaging::package_app;
 use tokio_core::reactor::Core;
 
 const USAGE: &'static str = "
@@ -25,7 +22,7 @@ Usage:
   krankerl login [--appstore | --github] <token>
   krankerl package <id>
   krankerl publish (--nightly) <id> <url>
-  krankerl sign <keypath> <packagepath>
+  krankerl sign --package
   krankerl --version
 
 Options:
@@ -36,8 +33,6 @@ Options:
 #[derive(Debug, Deserialize)]
 struct Args {
     arg_id: Option<String>,
-    arg_keypath: Option<String>,
-    arg_packagepath: Option<String>,
     arg_token: Option<String>,
     arg_url: Option<String>,
     arg_version: Option<String>,
@@ -51,6 +46,7 @@ struct Args {
     flag_appstore: bool,
     flag_github: bool,
     flag_nightly: bool,
+    flag_package: bool,
     flag_version: bool,
 }
 
@@ -103,29 +99,31 @@ fn main() {
         let url = args.arg_url.unwrap();
         let is_nightly = args.flag_nightly;
 
-        package_app(&app_id).expect("could not package app");
-        let sig = get_signature(&app_id).expect("could not get signature");
+        let packaging = future::lazy(|| package_app(&app_id));
+        let signing = future::lazy(|| sign_package());
+        let handle = core.handle();
 
-        let config = config::get_config().expect("could not load config");
-        assert!(config.appstore_token.is_some());
-        let api_token = config.appstore_token.unwrap();
+        let work = packaging.join(signing.and_then(|signature| {
+            let config = config::get_config().expect("could not load config");
+            assert!(config.appstore_token.is_some());
+            let api_token = config.appstore_token.unwrap();
 
-        let work = publish_app(&core.handle(), &url, is_nightly, &sig, &api_token);
+            publish_app(&handle, &url, is_nightly, &signature, &api_token)
+        }));
 
         core.run(work).unwrap_or_else(|e| {
-            println!("an error occured: {}", e);
+            println!("an error occured: {:?}", e);
+            ((), ())
         });
-    } else if args.cmd_sign {
-        let path1 = args.arg_keypath.unwrap();
-        let path2 = args.arg_packagepath.unwrap();
-        let key_path = PathBuf::from(&path1);
-        let package_path = PathBuf::from(&path2);
-
-        let signing = sign_package_async(&mut pool_builder, key_path, package_path);
-        let work = signing.and_then(|signature| {
-            println!("Package signature: {}", signature);
-            futures::future::ok(())
-        });
+    } else if args.cmd_sign && args.flag_package {
+        let pool = pool_builder.create();
+        let work = pool.spawn_fn(|| match sign_package() {
+            Ok(signature) => return future::ok(signature),
+            Err(err) => return future::err(err),
+        }).and_then(|signature| {
+                println!("Package signature: {}", signature);
+                futures::future::ok(())
+            });
 
         core.run(work).unwrap_or_else(|e| {
             println!("an error occured: {}", e);
