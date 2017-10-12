@@ -20,8 +20,8 @@ Usage:
   krankerl list apps <version>
   krankerl list categories
   krankerl login [--appstore | --github] <token>
-  krankerl package <id>
-  krankerl publish (--nightly) <id> <url>
+  krankerl package
+  krankerl publish (--nightly) <url>
   krankerl sign --package
   krankerl --version
 
@@ -32,7 +32,6 @@ Options:
 
 #[derive(Debug, Deserialize)]
 struct Args {
-    arg_id: Option<String>,
     arg_token: Option<String>,
     arg_url: Option<String>,
     arg_version: Option<String>,
@@ -90,16 +89,12 @@ fn main() {
             println!("App store token saved.");
         }
     } else if args.cmd_package {
-        let app_id = args.arg_id.unwrap();
-
-        package_app(&app_id).expect("could not package app");
-        println!("Packaged app {}.", app_id);
+        package_app().expect("could not package app");
     } else if args.cmd_publish {
-        let app_id = args.arg_id.unwrap();
         let url = args.arg_url.unwrap();
         let is_nightly = args.flag_nightly;
 
-        let packaging = future::lazy(|| package_app(&app_id));
+        let packaging = future::lazy(|| package_app());
         let signing = future::lazy(|| sign_package());
         let handle = core.handle();
 

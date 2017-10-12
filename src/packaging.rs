@@ -3,6 +3,7 @@ use std::io;
 use std::process::Command;
 use std::path::{Path, PathBuf};
 use super::error;
+use nextcloud_appinfo::get_appinfo;
 
 fn clear_artifacts_dir(path: &Path) -> Result<(), error::Error> {
     if let Err(e) = fs::remove_dir_all(path) {
@@ -37,7 +38,14 @@ fn package(build_path: &Path) -> Result<(), error::Error> {
     Ok(())
 }
 
-pub fn package_app(app_id: &String) -> Result<(), error::Error> {
+fn get_app_id() -> Result<String, error::Error> {
+    let app_path = Path::new(".").canonicalize()?;
+    let app_info = get_appinfo(&app_path)?;
+    Ok(app_info.id().to_owned())
+}
+
+pub fn package_app() -> Result<(), error::Error> {
+    let app_id = get_app_id()?;
     println!("packaging {}", app_id);
 
     let mut path = PathBuf::from("./build/artifacts");

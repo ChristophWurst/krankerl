@@ -9,8 +9,8 @@ Usage:
   krankerl list apps <version>
   krankerl list categories
   krankerl login [--appstore | --github] <token>
-  krankerl package <id>
-  krankerl publish (--nightly) <id> <url>
+  krankerl package
+  krankerl publish (--nightly) <url>
   krankerl sign --package
   krankerl --version
 
