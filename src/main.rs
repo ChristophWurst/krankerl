@@ -124,6 +124,6 @@ fn main() {
             println!("an error occured: {}", e);
         });
     } else if args.flag_version {
-        println!("v0.1.1");
+        println!("v0.2.0");
     }
 }
