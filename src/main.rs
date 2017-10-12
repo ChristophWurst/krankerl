@@ -86,7 +86,9 @@ fn main() {
         if args.flag_appstore {
             let token = args.arg_token.unwrap();
             config::set_appstore_token(&token).expect("could not save appstore token");
-            println!("App store token saved.");
+        } else if args.flag_github {
+            let token = args.arg_token.unwrap();
+            config::set_github_token(&token).expect("could not save github token");
         }
     } else if args.cmd_package {
         package_app().expect("could not package app");
