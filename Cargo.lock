@@ -9,8 +9,9 @@ dependencies = [
  "hex 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "hyper 0.11.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "hyper-tls 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "nextcloud_appinfo 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "nextcloud_appstore 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "nextcloud_appinfo 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "nextcloud_appsignature 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "nextcloud_appstore 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "openssl 0.9.17 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.14 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_derive 1.0.14 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -391,15 +392,26 @@ dependencies = [
 
 [[package]]
 name = "nextcloud_appinfo"
-version = "0.1.0"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "xpath_reader 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
+name = "nextcloud_appsignature"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "base64 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "futures 0.1.15 (registry+https://github.com/rust-lang/crates.io-index)",
+ "hex 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "openssl 0.9.17 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "nextcloud_appstore"
-version = "0.1.2"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "futures 0.1.15 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -895,8 +907,9 @@ dependencies = [
 "checksum miow 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "8c1f2f3b1cf331de6896aabf6e9d55dca90356cc9960cca7eaaf408a355ae919"
 "checksum native-tls 0.1.4 (registry+https://github.com/rust-lang/crates.io-index)" = "04b781c9134a954c84f0594b9ab3f5606abc516030388e8511887ef4c204a1e5"
 "checksum net2 0.2.31 (registry+https://github.com/rust-lang/crates.io-index)" = "3a80f842784ef6c9a958b68b7516bc7e35883c614004dd94959a4dca1b716c09"
-"checksum nextcloud_appinfo 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "63b9f3b12ac4defee4f95ab1c4237d757c3436386acc5fef8a177902b29ef1b4"
-"checksum nextcloud_appstore 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)" = "a71e19df6dedcf8fcc97ea7c8101a29331b6d4d676354f2333783f5da2e158fc"
+"checksum nextcloud_appinfo 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "2d39899a6ac17b825c86f082ce84e20a876493bdbaf752853c3bfc937f073dbd"
+"checksum nextcloud_appsignature 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "9bfa05e9544bb36c6884dca57b8b2c95bf0cb2dc09f4e58a9ff16d2f315e9e17"
+"checksum nextcloud_appstore 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "981829d3b27ea601f88df69566a59de744d9480b061d02d587a11de84790d2a7"
 "checksum num-traits 0.1.40 (registry+https://github.com/rust-lang/crates.io-index)" = "99843c856d68d8b4313b03a17e33c4bb42ae8f6610ea81b28abe076ac721b9b0"
 "checksum num_cpus 1.6.2 (registry+https://github.com/rust-lang/crates.io-index)" = "aec53c34f2d0247c5ca5d32cca1478762f301740468ee9ee6dcb7a0dd7a0c584"
 "checksum openssl 0.9.17 (registry+https://github.com/rust-lang/crates.io-index)" = "085aaedcc89a2fac1eb2bc19cd66f29d4ea99fec60f82a5f3a88a6be7dbd90b5"

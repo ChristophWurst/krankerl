@@ -11,7 +11,7 @@ Usage:
   krankerl login [--appstore | --github] <token>
   krankerl package <id>
   krankerl publish (--nightly) <id> <url>
-  krankerl sign <keypath> <packagepath>
+  krankerl sign --package
   krankerl --version
 
 Options:
