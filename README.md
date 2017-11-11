@@ -6,6 +6,8 @@ A CLI tool for the Nextcloud app store
 
 ```
 Usage:
+  krankerl enable
+  krankerl disable
   krankerl list apps <version>
   krankerl list categories
   krankerl login [--appstore | --github] <token>

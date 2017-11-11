@@ -15,14 +15,31 @@ extern crate xdg;
 
 pub mod config;
 pub mod error;
+pub mod occ;
 pub mod packaging;
+
+use std::env;
+use std::path::{Path, PathBuf};
 
 use futures::Future;
 use nextcloud_appinfo::get_appinfo;
 pub use nextcloud_appstore::{get_apps_and_releases, get_categories};
-use std::env;
-use std::path::{Path, PathBuf};
 use tokio_core::reactor::Handle;
+use occ::Occ;
+
+pub fn enable_app() -> Result<(), error::Error> {
+    let app_path = Path::new(".").canonicalize()?;
+    let info = get_appinfo(&app_path)?;
+    let occ = Occ::new("../../occ");
+    occ.enable_app(info.id())
+}
+
+pub fn disable_app() -> Result<(), error::Error> {
+    let app_path = Path::new(".").canonicalize()?;
+    let info = get_appinfo(&app_path)?;
+    let occ = Occ::new("../../occ");
+    occ.disable_app(info.id())
+}
 
 fn get_home_dir() -> Result<PathBuf, error::Error> {
     env::home_dir().ok_or(error::Error::Other(
@@ -69,7 +86,8 @@ pub fn publish_app(
     signature: &String,
     api_token: &String,
 ) -> Box<futures::Future<Item = (), Error = error::Error>> {
-    Box::new(nextcloud_appstore::publish_app(handle, url, is_nightly, signature  , api_token).map_err(|e| {
-        error::Error::AppStore(e)
-    }))
+    Box::new(
+        nextcloud_appstore::publish_app(handle, url, is_nightly, signature, api_token)
+            .map_err(|e| error::Error::AppStore(e)),
+    )
 }

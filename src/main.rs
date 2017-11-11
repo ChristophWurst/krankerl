@@ -17,6 +17,8 @@ const USAGE: &'static str = "
 Krankerl. A CLI tool for the Nextcloud app store.
 
 Usage:
+  krankerl enable
+  krankerl disable
   krankerl list apps <version>
   krankerl list categories
   krankerl login [--appstore | --github] <token>
@@ -37,6 +39,8 @@ struct Args {
     arg_version: Option<String>,
     cmd_apps: bool,
     cmd_categories: bool,
+    cmd_enable: bool,
+    cmd_disable: bool,
     cmd_list: bool,
     cmd_login: bool,
     cmd_package: bool,
@@ -58,7 +62,15 @@ fn main() {
     let mut pool_builder = futures_cpupool::Builder::new();
     pool_builder.pool_size(2);
 
-    if args.cmd_list && args.cmd_apps {
+    if args.cmd_enable {
+        enable_app().unwrap_or_else(|e| {
+            println!("an error occured: {}", e);
+        });
+    } else if args.cmd_disable {
+        disable_app().unwrap_or_else(|e| {
+            println!("an error occured: {}", e);
+        });
+    } else if args.cmd_list && args.cmd_apps {
         let version = &args.arg_version.unwrap();
 
         let work = get_apps_and_releases(&core.handle(), &version.to_owned()).map(|apps| {
