@@ -4,7 +4,7 @@ use std::fs::OpenOptions;
 use std::io::prelude::*;
 use xdg;
 
-use super::error;
+use super::super::error;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Config {

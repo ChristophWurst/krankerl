@@ -7,9 +7,12 @@ extern crate nextcloud_appstore;
 extern crate serde_derive;
 extern crate tokio_core;
 
+use std::path::Path;
+
 use docopt::Docopt;
 use futures::{future, Future};
 use krankerl::*;
+use krankerl::config::app::init_config;
 use krankerl::packaging::package_app;
 use tokio_core::reactor::Core;
 
@@ -19,6 +22,7 @@ Krankerl. A CLI tool for the Nextcloud app store.
 Usage:
   krankerl enable
   krankerl disable
+  krankerl init
   krankerl list apps <version>
   krankerl list categories
   krankerl login [--appstore | --github] <token>
@@ -41,6 +45,7 @@ struct Args {
     cmd_categories: bool,
     cmd_enable: bool,
     cmd_disable: bool,
+    cmd_init: bool,
     cmd_list: bool,
     cmd_login: bool,
     cmd_package: bool,
@@ -70,6 +75,12 @@ fn main() {
         disable_app().unwrap_or_else(|e| {
             println!("an error occured: {}", e);
         });
+    } else if args.cmd_init {
+        let cwd = Path::new(".");
+        match init_config(&cwd) {
+            Ok(_) => println!("krankl.toml created."),
+            Err(e) => println!("could not create krankerl.toml: {}", e),
+        };
     } else if args.cmd_list && args.cmd_apps {
         let version = &args.arg_version.unwrap();
 
@@ -97,13 +108,13 @@ fn main() {
     } else if args.cmd_login {
         if args.flag_appstore {
             let token = args.arg_token.unwrap();
-            config::set_appstore_token(&token).expect("could not save appstore token");
+            config::krankerl::set_appstore_token(&token).expect("could not save appstore token");
         } else if args.flag_github {
             let token = args.arg_token.unwrap();
-            config::set_github_token(&token).expect("could not save github token");
+            config::krankerl::set_github_token(&token).expect("could not save github token");
         }
     } else if args.cmd_package {
-        package_app().expect("could not package app");
+        package_app().unwrap_or_else(|e| println!("could not package app: {}", e));
     } else if args.cmd_publish {
         let url = args.arg_url.unwrap();
         let is_nightly = args.flag_nightly;
@@ -113,7 +124,7 @@ fn main() {
         let handle = core.handle();
 
         let work = packaging.join(signing.and_then(|signature| {
-            let config = config::get_config().expect("could not load config");
+            let config = config::krankerl::get_config().expect("could not load config");
             assert!(config.appstore_token.is_some());
             let api_token = config.appstore_token.unwrap();
 
