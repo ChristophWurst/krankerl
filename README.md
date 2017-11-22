@@ -23,7 +23,7 @@ Options:
 ```
 
 ## Enable the current app
-Krankerl provides a shortcut to enabling an app via the `occ` tool. This assumes
+Krankerl provides a shortcut to enable an app via the `occ` tool. This assumes
 that you are inside the app's root directory and `occ` can be found in the directory
 two levels above the current one.
 
@@ -32,7 +32,7 @@ krankerl enable
 ```
 
 ## Disable the current app
-Krankerl provides a shortcut to enabling an app via the `occ` tool. This assumes
+Krankerl provides a shortcut to disable an app via the `occ` tool. This assumes
 that you are inside the app's root directory and `occ` can be found in the directory
 two levels above the current one.
 
@@ -47,7 +47,7 @@ Moreover, Krankerl will not use the current state of the app directory, but
 clone it into a new directory. This step was added to make app builds
 reproducible and independent of local changes.
 
-## Steps
+### Steps
 
 These are the steps Krankerl executes to package an app:
 
