@@ -17,7 +17,7 @@ use krankerl::packaging::package_app;
 use tokio_core::reactor::Core;
 
 const USAGE: &'static str = "
-Krankerl. A CLI tool for the Nextcloud app store.
+Krankerl. A CLI helper to manage Nextcloud apps.
 
 Usage:
   krankerl enable
@@ -149,6 +149,6 @@ fn main() {
             println!("an error occured: {}", e);
         });
     } else if args.flag_version {
-        println!("v0.2.0");
+        println!(env!("CARGO_PKG_VERSION"));
     }
 }
