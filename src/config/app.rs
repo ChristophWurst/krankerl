@@ -7,6 +7,7 @@ use std::path::Path;
 
 use toml;
 
+use super::{ConfigFileReader, ConfigReader};
 use super::super::error;
 
 #[derive(Debug, Deserialize)]
@@ -105,15 +106,16 @@ exclude = [
     Ok(())
 }
 
-fn load_config(path: &Path) -> Result<String, error::Error> {
+fn load_config<R>(path: &Path, reader: &R) -> Result<String, error::Error>
+where
+    R: ConfigReader,
+{
     let mut path_buf = path.to_path_buf();
     path_buf.push("krankerl.toml");
 
-    let mut file = File::open(path_buf)?;
-    let mut contents = String::new();
-    file.read_to_string(&mut contents)?;
+    let as_string = reader.read(&path_buf)?;
 
-    Ok(contents)
+    Ok(as_string)
 }
 
 fn parse_config(config: String) -> Result<ParsedAppConfig, error::Error> {
@@ -126,7 +128,8 @@ fn parse_config(config: String) -> Result<ParsedAppConfig, error::Error> {
 }
 
 pub fn get_config(path: &Path) -> Result<AppConfig, error::Error> {
-    let config_str = load_config(path)?;
+    let reader = ConfigFileReader::new();
+    let config_str = load_config(path, &reader)?;
     parse_config(config_str).map(|config| config.into())
 }
 
@@ -139,6 +142,24 @@ mod tests {
     use tempdir::TempDir;
 
     use super::*;
+
+    struct StaticReader {}
+
+    impl ConfigReader for StaticReader {
+        fn read(&self, path: &Path) -> Result<String, error::Error> {
+            Ok(path.to_str().unwrap().to_owned())
+        }
+    }
+
+    #[test]
+    fn test_load_config() {
+        let reader = StaticReader {};
+        let path = Path::new("my/app");
+
+        let conf = load_config(&path, &reader).unwrap();
+
+        assert_eq!("my/app/krankerl.toml".to_owned(), conf);
+    }
 
     fn prepare_fs_test(id: &'static str) -> (PathBuf, TempDir) {
         let mut src = PathBuf::from("./tests/apps");
@@ -182,10 +203,11 @@ mod tests {
     }
 
     #[test]
-    fn test_load_config() {
+    fn test_load_real_config() {
         let (app_path, tmp) = prepare_fs_test("app3");
+        let reader = ConfigFileReader::new();
 
-        load_config(&app_path).unwrap();
+        load_config(&app_path, &reader).unwrap();
 
         tmp.close().unwrap();
     }

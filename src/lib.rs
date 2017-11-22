@@ -6,6 +6,7 @@ extern crate futures;
 extern crate futures_cpupool;
 extern crate globset;
 extern crate hex;
+
 extern crate nextcloud_appinfo;
 extern crate nextcloud_appsignature;
 extern crate nextcloud_appstore;
