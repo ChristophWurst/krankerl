@@ -48,7 +48,7 @@ impl PackageCommands for CommandList {
 impl<'a> Into<CommandList> for &'a PackageConfig {
     fn into(self) -> CommandList {
         CommandList {
-            cmds: self.before_cmds().clone().unwrap_or(vec![]).to_owned(),
+            cmds: self.before_cmds().clone(),
         }
     }
 }
@@ -56,7 +56,7 @@ impl<'a> Into<CommandList> for &'a PackageConfig {
 impl Into<CommandList> for PackageConfig {
     fn into(self) -> CommandList {
         CommandList {
-            cmds: self.before_cmds().clone().unwrap_or(vec![]).to_owned(),
+            cmds: self.before_cmds().clone(),
         }
     }
 }
