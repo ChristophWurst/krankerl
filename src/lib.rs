@@ -1,5 +1,7 @@
 extern crate base64;
 extern crate flate2;
+#[cfg(test)]
+extern crate fs_extra;
 extern crate futures;
 extern crate futures_cpupool;
 extern crate globset;
@@ -13,6 +15,8 @@ extern crate pathdiff;
 extern crate serde_derive;
 extern crate serde_json;
 extern crate tar;
+#[cfg(test)]
+extern crate tempdir;
 extern crate tokio_core;
 extern crate toml;
 extern crate walkdir;
