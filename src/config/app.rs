@@ -98,7 +98,7 @@ mod tests {
     }
 
     #[test]
-    fn test_parse_config() {
+    fn test_parse_config_without_commands() {
         let toml = r#"
             [package]
             exclude = [
@@ -111,5 +111,24 @@ mod tests {
         let config = parse_config(toml.to_owned());
 
         assert!(config.is_ok());
+    }
+
+    #[test]
+    fn test_parse_config_with_commands() {
+        let toml = r#"
+        [package]
+        before_cmds = [
+            "composer install",
+            "npm install",
+            "npm run build",
+        ]
+
+        exclude = []"#;
+
+        let config = parse_config(toml.to_owned());
+
+        assert!(config.is_ok());
+        let config = config.unwrap();
+        assert!(config.package.before_cmds.is_some());
     }
 }
