@@ -43,7 +43,7 @@ pub fn init_config(app_path: &Path) -> Result<(), error::Error> {
         ));
     }
 
-    let mut config_file = File::create(path_buf)?;
+    let mut config_file = File::create(&path_buf)?;
 
     config_file.write_all(
         r#"[packaging]
@@ -83,7 +83,63 @@ pub fn get_config(path: &Path) -> Result<AppConfig, error::Error> {
 
 #[cfg(test)]
 mod tests {
+    use std::fs::File;
+    use std::path::PathBuf;
+
+    use fs_extra::dir::{copy, CopyOptions};
+    use tempdir::TempDir;
+
     use super::*;
+
+    fn prepare_fs_test(id: &'static str) -> (PathBuf, TempDir) {
+        let mut src = PathBuf::from("./tests/apps");
+        src.push(id);
+
+        let tmp = TempDir::new("krankerl").unwrap();
+        let options = CopyOptions::new();
+        copy(&src, tmp.path(), &options).expect("copy app files");
+
+        let mut app_path = tmp.path().to_path_buf();
+        app_path.push(id);
+        (app_path, tmp)
+    }
+
+    #[test]
+    fn test_init_creates_config() {
+        let (app_path, tmp) = prepare_fs_test("app1");
+
+        let mut krankl_path = app_path.clone();
+        krankl_path.push("krankerl.toml");
+        File::open(&krankl_path).unwrap_err();
+
+        init_config(&app_path).unwrap();
+
+        File::open(&krankl_path).unwrap();
+        tmp.close().unwrap();
+    }
+
+    #[test]
+    fn test_init_stops_if_config_exists() {
+        let (app_path, tmp) = prepare_fs_test("app2");
+
+        let mut krankl_path = app_path.clone();
+        krankl_path.push("krankerl.toml");
+        File::open(&krankl_path).unwrap();
+
+        init_config(&app_path).unwrap_err();
+
+        File::open(&krankl_path).unwrap();
+        tmp.close().unwrap();
+    }
+
+    #[test]
+    fn test_load_config() {
+        let (app_path, tmp) = prepare_fs_test("app3");
+
+        load_config(&app_path).unwrap();
+
+        tmp.close().unwrap();
+    }
 
     #[test]
     fn test_parse_minimal_config() {
