@@ -1,3 +1,5 @@
+use std::convert::Into;
+use std::default::Default;
 use std::error::Error;
 use std::fs::File;
 use std::io::prelude::*;
@@ -8,6 +10,17 @@ use toml;
 use super::super::error;
 
 #[derive(Debug, Deserialize)]
+struct ParsedAppConfig {
+    package: Option<ParsedPackageConfig>,
+}
+
+#[derive(Debug, Deserialize)]
+struct ParsedPackageConfig {
+    before_cmds: Option<Vec<String>>,
+    exclude: Option<Vec<String>>,
+}
+
+#[derive(Debug)]
 pub struct AppConfig {
     package: PackageConfig,
 }
@@ -18,18 +31,54 @@ impl AppConfig {
     }
 }
 
-#[derive(Debug, Deserialize)]
+impl Default for AppConfig {
+    fn default() -> Self {
+        AppConfig {
+            package: PackageConfig::default(),
+        }
+    }
+}
+
+impl Into<AppConfig> for ParsedAppConfig {
+    fn into(self) -> AppConfig {
+        AppConfig {
+            package: self.package
+                .map(|pc| pc.into())
+                .unwrap_or(PackageConfig::default()),
+        }
+    }
+}
+
+#[derive(Debug)]
 pub struct PackageConfig {
-    before_cmds: Option<Vec<String>>,
+    before_cmds: Vec<String>,
     exclude: Vec<String>,
 }
 
 impl PackageConfig {
-    pub fn before_cmds(&self) -> &Option<Vec<String>> {
+    pub fn before_cmds(&self) -> &Vec<String> {
         &self.before_cmds
     }
     pub fn exclude(&self) -> &Vec<String> {
         &self.exclude
+    }
+}
+
+impl Into<PackageConfig> for ParsedPackageConfig {
+    fn into(self) -> PackageConfig {
+        PackageConfig {
+            before_cmds: self.before_cmds.unwrap_or(vec![]),
+            exclude: self.exclude.unwrap_or(vec![]),
+        }
+    }
+}
+
+impl Default for PackageConfig {
+    fn default() -> Self {
+        PackageConfig {
+            before_cmds: vec![],
+            exclude: vec![],
+        }
     }
 }
 
@@ -67,7 +116,7 @@ fn load_config(path: &Path) -> Result<String, error::Error> {
     Ok(contents)
 }
 
-fn parse_config(config: String) -> Result<AppConfig, error::Error> {
+fn parse_config(config: String) -> Result<ParsedAppConfig, error::Error> {
     toml::from_str(&config).map_err(|e| {
         error::Error::Other(format!(
             "could not parse krankerl.toml: {}",
@@ -78,7 +127,7 @@ fn parse_config(config: String) -> Result<AppConfig, error::Error> {
 
 pub fn get_config(path: &Path) -> Result<AppConfig, error::Error> {
     let config_str = load_config(path)?;
-    parse_config(config_str)
+    parse_config(config_str).map(|config| config.into())
 }
 
 #[cfg(test)]
@@ -86,7 +135,16 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_parse_minimal_config() {
+    fn test_parse_empty_config() {
+        let toml = r#""#;
+
+        let config = parse_config(toml.to_owned());
+
+        assert!(config.is_ok());
+    }
+
+    #[test]
+    fn test_parse_simple_config() {
         let toml = r#"
             [package]
             exclude = []
@@ -129,6 +187,10 @@ mod tests {
 
         assert!(config.is_ok());
         let config = config.unwrap();
-        assert!(config.package.before_cmds.is_some());
+        assert!(config.package.is_some());
+        let package_config = config.package.unwrap();
+        assert!(package_config.before_cmds.is_some());
+        let cmds = package_config.before_cmds.unwrap();
+        assert_eq!(3, cmds.len());
     }
 }
