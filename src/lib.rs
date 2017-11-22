@@ -1,15 +1,20 @@
 extern crate base64;
+extern crate flate2;
 extern crate futures;
 extern crate futures_cpupool;
+extern crate globset;
 extern crate hex;
 extern crate nextcloud_appinfo;
 extern crate nextcloud_appsignature;
 extern crate nextcloud_appstore;
 extern crate openssl;
+extern crate pathdiff;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
+extern crate tar;
 extern crate tokio_core;
+extern crate toml;
 extern crate walkdir;
 extern crate xdg;
 
