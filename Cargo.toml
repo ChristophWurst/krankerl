@@ -2,6 +2,7 @@
 name = "krankerl"
 version = "0.2.0"
 authors = ["Christoph Wurst <christoph@winzerhof-wurst.at>"]
+description = "A CLI helper to manage Nextcloud apps"
 
 [dependencies]
 base64 = "0.7"
