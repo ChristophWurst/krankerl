@@ -22,6 +22,10 @@ Options:
   --version     Show version.
 ```
 
+In case you wondered about the app's name: the word *Krankerl* means *tendril*
+in Lower Austrian dialect. [This](https://www.instagram.com/p/BatDv1DhhOe/)
+is what that typically looks like in a vine yard.
+
 ## Enable the current app
 Krankerl provides a shortcut to enable an app via the `occ` tool. This assumes
 that you are inside the app's root directory and `occ` can be found in the directory
@@ -105,3 +109,19 @@ before_cmds = [
     "npm run build",
 ]
 ```
+
+## Publish
+
+Krankerl allows you to publish an app release on [apps.nextcloud.com](https://apps.nextcloud.com)
+once you've packaged the app files with the `package` command.
+
+
+Note: This currently only includes the registration on the app store. You have to
+first upload the archive to GitHub (or any download server) and then pass
+the URL to the `package` command:
+
+```bash
+krankerl publish --nightly https://github.com/ChristophWurst/nextcloud_sentry/releases/download/nightly-20171126/sentry.tar.gz
+```
+
+The `--nightly` switch registers the app as nightly release.
