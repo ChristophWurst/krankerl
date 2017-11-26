@@ -78,7 +78,12 @@ impl Default for PackageConfig {
     fn default() -> Self {
         PackageConfig {
             before_cmds: vec![],
-            exclude: vec![],
+            exclude: vec![
+                ".git".to_owned(),
+                ".gitignore".to_owned(),
+                "build".to_owned(),
+                "tests".to_owned(),
+            ],
         }
     }
 }
@@ -96,8 +101,12 @@ pub fn init_config(app_path: &Path) -> Result<(), error::Error> {
     let mut config_file = File::create(&path_buf)?;
 
     config_file.write_all(
-        r#"[packaging]
+        r#"[package]
 exclude = [
+
+]
+
+before_cmds = [
 
 ]
 "#.as_bytes(),
@@ -106,14 +115,11 @@ exclude = [
     Ok(())
 }
 
-fn load_config<R>(path: &Path, reader: &R) -> Result<String, error::Error>
+fn load_config<R>(reader: &R) -> Result<String, error::Error>
 where
     R: ConfigReader,
 {
-    let mut path_buf = path.to_path_buf();
-    path_buf.push("krankerl.toml");
-
-    let as_string = reader.read(&path_buf)?;
+    let as_string = reader.read()?;
 
     Ok(as_string)
 }
@@ -127,10 +133,17 @@ fn parse_config(config: String) -> Result<ParsedAppConfig, error::Error> {
     })
 }
 
-pub fn get_config(path: &Path) -> Result<AppConfig, error::Error> {
-    let reader = ConfigFileReader::new();
-    let config_str = load_config(path, &reader)?;
-    parse_config(config_str).map(|config| config.into())
+pub fn get_config(path: &Path) -> Result<Option<AppConfig>, error::Error> {
+    let mut path_buf = path.to_path_buf();
+    path_buf.push("krankerl.toml");
+    let reader = ConfigFileReader::new(path_buf);
+
+    if !reader.has_config() {
+        Ok(None)
+    } else {
+        let config_str = load_config(&reader)?;
+        parse_config(config_str).map(|config| Some(config.into()))
+    }
 }
 
 #[cfg(test)]
@@ -146,19 +159,22 @@ mod tests {
     struct StaticReader {}
 
     impl ConfigReader for StaticReader {
-        fn read(&self, path: &Path) -> Result<String, error::Error> {
-            Ok(path.to_str().unwrap().to_owned())
+        fn has_config(&self) -> bool {
+            true
+        }
+
+        fn read(&self) -> Result<String, error::Error> {
+            Ok("some config".to_owned())
         }
     }
 
     #[test]
     fn test_load_config() {
         let reader = StaticReader {};
-        let path = Path::new("my/app");
 
-        let conf = load_config(&path, &reader).unwrap();
+        let conf = load_config(&reader).unwrap();
 
-        assert_eq!("my/app/krankerl.toml".to_owned(), conf);
+        assert_eq!("some config".to_owned(), conf);
     }
 
     fn prepare_fs_test(id: &'static str) -> (PathBuf, TempDir) {
@@ -178,13 +194,12 @@ mod tests {
     fn test_init_creates_config() {
         let (app_path, tmp) = prepare_fs_test("app1");
 
-        let mut krankl_path = app_path.clone();
-        krankl_path.push("krankerl.toml");
-        File::open(&krankl_path).unwrap_err();
+        let krankerl_path = app_path.join("krankerl.toml");
+        File::open(&krankerl_path).unwrap_err();
 
         init_config(&app_path).unwrap();
 
-        File::open(&krankl_path).unwrap();
+        File::open(&krankerl_path).unwrap();
         tmp.close().unwrap();
     }
 
@@ -192,22 +207,22 @@ mod tests {
     fn test_init_stops_if_config_exists() {
         let (app_path, tmp) = prepare_fs_test("app2");
 
-        let mut krankl_path = app_path.clone();
-        krankl_path.push("krankerl.toml");
-        File::open(&krankl_path).unwrap();
+        let krankerl_path = app_path.join("krankerl.toml");
+        File::open(&krankerl_path).unwrap();
 
         init_config(&app_path).unwrap_err();
 
-        File::open(&krankl_path).unwrap();
+        File::open(&krankerl_path).unwrap();
         tmp.close().unwrap();
     }
 
     #[test]
     fn test_load_real_config() {
         let (app_path, tmp) = prepare_fs_test("app3");
-        let reader = ConfigFileReader::new();
+        let config_path = app_path.join("krankerl.toml");
+        let reader = ConfigFileReader::new(config_path);
 
-        load_config(&app_path, &reader).unwrap();
+        load_config(&reader).unwrap();
 
         tmp.close().unwrap();
     }
