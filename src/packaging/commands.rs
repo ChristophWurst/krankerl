@@ -10,6 +10,7 @@ pub trait PackageCommands {
     fn execute(&self, cwd: &Path) -> Result<(), error::Error>;
 }
 
+#[derive(Debug)]
 pub struct CommandList {
     cmds: Vec<String>,
 }

@@ -45,9 +45,10 @@ krankerl disable
 ```
 
 ## Packaging
-Krankerl can build a `.tar.gz` archive for the current app. This requires a
-`krankerl.toml` configuration file to exist in the app's root directory.
-Moreover, Krankerl will not use the current state of the app directory, but
+Krankerl can build a `.tar.gz` archive for the current app. This assumes a
+`krankerl.toml` configuration file to exist in the app's root directory. If
+it doesn't, Krankerl will fall back to sensible defaults.
+The command will not use the current state of the app directory, but
 clone it into a new directory. This step was added to make app builds
 reproducible and independent of local changes.
 
