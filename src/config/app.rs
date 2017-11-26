@@ -101,8 +101,12 @@ pub fn init_config(app_path: &Path) -> Result<(), error::Error> {
     let mut config_file = File::create(&path_buf)?;
 
     config_file.write_all(
-        r#"[packaging]
+        r#"[package]
 exclude = [
+
+]
+
+before_cmds = [
 
 ]
 "#.as_bytes(),
