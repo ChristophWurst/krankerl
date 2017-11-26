@@ -78,7 +78,12 @@ impl Default for PackageConfig {
     fn default() -> Self {
         PackageConfig {
             before_cmds: vec![],
-            exclude: vec![],
+            exclude: vec![
+                ".git".to_owned(),
+                ".gitignore".to_owned(),
+                "build".to_owned(),
+                "tests".to_owned(),
+            ],
         }
     }
 }
