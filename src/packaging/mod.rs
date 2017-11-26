@@ -83,7 +83,12 @@ pub fn package_app() -> Result<(), error::Error> {
     artifacts::clear(&artifacts_path)?;
     artifacts_path.push(&app_id);
     artifacts::clone_app(&cwd, &artifacts_path)?;
-    let app_config = config::app::get_config(&artifacts_path)?;
+    let app_config = config::app::get_config(&artifacts_path).map(|config| {
+        config.unwrap_or_else(|| {
+            println!("Warning: No krankerl.toml found. A default configuration is used instead.");
+            AppConfig::default()
+        })
+    })?;
     run_package_commands(&artifacts_path, app_config.package().into())?;
     package(package_path.as_path(), &app_id, &app_config)
 }
