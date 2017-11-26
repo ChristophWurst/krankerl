@@ -119,21 +119,19 @@ fn main() {
         let url = args.arg_url.unwrap();
         let is_nightly = args.flag_nightly;
 
-        let packaging = future::lazy(|| package_app());
         let signing = future::lazy(|| sign_package());
         let handle = core.handle();
 
-        let work = packaging.join(signing.and_then(|signature| {
+        let work = signing.and_then(|signature| {
             let config = config::krankerl::get_config().expect("could not load config");
             assert!(config.appstore_token.is_some());
             let api_token = config.appstore_token.unwrap();
 
             publish_app(&handle, &url, is_nightly, &signature, &api_token)
-        }));
+        });
 
         core.run(work).unwrap_or_else(|e| {
             println!("an error occured: {:?}", e);
-            ((), ())
         });
     } else if args.cmd_sign && args.flag_package {
         let pool = pool_builder.create();
