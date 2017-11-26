@@ -190,13 +190,12 @@ mod tests {
     fn test_init_creates_config() {
         let (app_path, tmp) = prepare_fs_test("app1");
 
-        let mut krankl_path = app_path.clone();
-        krankl_path.push("krankerl.toml");
-        File::open(&krankl_path).unwrap_err();
+        let krankerl_path = app_path.join("krankerl.toml");
+        File::open(&krankerl_path).unwrap_err();
 
         init_config(&app_path).unwrap();
 
-        File::open(&krankl_path).unwrap();
+        File::open(&krankerl_path).unwrap();
         tmp.close().unwrap();
     }
 
@@ -204,13 +203,12 @@ mod tests {
     fn test_init_stops_if_config_exists() {
         let (app_path, tmp) = prepare_fs_test("app2");
 
-        let mut krankl_path = app_path.clone();
-        krankl_path.push("krankerl.toml");
-        File::open(&krankl_path).unwrap();
+        let krankerl_path = app_path.join("krankerl.toml");
+        File::open(&krankerl_path).unwrap();
 
         init_config(&app_path).unwrap_err();
 
-        File::open(&krankl_path).unwrap();
+        File::open(&krankerl_path).unwrap();
         tmp.close().unwrap();
     }
 

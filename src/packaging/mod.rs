@@ -58,7 +58,7 @@ fn ensure_config_exists(app_path: &Path) -> Result<(), error::Error> {
     match config::app::get_config(app_path) {
         Ok(_) => Ok(()),
         Err(e) => Err(error::Error::Other(
-            format!("could not load krankl.toml: {}", e),
+            format!("could not load krankerl.toml: {}", e),
         )),
     }
 }

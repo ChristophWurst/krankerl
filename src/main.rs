@@ -78,7 +78,7 @@ fn main() {
     } else if args.cmd_init {
         let cwd = Path::new(".");
         match init_config(&cwd) {
-            Ok(_) => println!("krankl.toml created."),
+            Ok(_) => println!("krankerl.toml created."),
             Err(e) => println!("could not create krankerl.toml: {}", e),
         };
     } else if args.cmd_list && args.cmd_apps {
