@@ -3,7 +3,6 @@ use std::vec::Vec;
 
 use globset;
 use pathdiff::diff_paths;
-use walkdir::DirEntry;
 
 use error;
 
@@ -15,9 +14,12 @@ impl ExcludedFiles {
     pub fn new(excludes: &Vec<String>) -> Result<Self, error::Error> {
         let mut builder = globset::GlobSetBuilder::new();
         for excl in excludes {
-            let glob = globset::Glob::new(excl).map_err(|_| {
-                error::Error::Other(format!("could not build exclude for {}", excl))
-            })?;
+            let glob = globset::GlobBuilder::new(excl)
+                .literal_separator(true)
+                .build()
+                .map_err(|_| {
+                    error::Error::Other(format!("could not build exclude for {}", excl))
+                })?;
             builder.add(glob);
         }
         let set = builder.build().map_err(|e| {
@@ -27,8 +29,8 @@ impl ExcludedFiles {
         Ok(ExcludedFiles { glob: set })
     }
 
-    pub fn is_excluded(&self, entry: &DirEntry, base: &Path) -> bool {
-        diff_paths(entry.path(), base)
+    pub fn is_excluded(&self, path: &Path, base: &Path) -> bool {
+        diff_paths(path, base)
             .map(|normalized| !self.glob.matches(&normalized).is_empty())
             .unwrap_or(false)
     }
@@ -45,6 +47,22 @@ mod tests {
         let excludes = ExcludedFiles::new(&rules);
 
         assert!(excludes.is_ok());
+    }
+
+    #[test]
+    fn test_path_separator() {
+        let rules = vec!["js/*.js".to_string()];
+
+        let excludes = ExcludedFiles::new(&rules).unwrap();
+
+        assert!(!excludes.is_excluded(
+            &Path::new("build/artefacts/app/js/build/build.js"),
+            &Path::new("build/artefacts/app")
+        ));
+        assert!(excludes.is_excluded(
+            &Path::new("build/artefacts/app/js/init.js"),
+            &Path::new("build/artefacts/app")
+        ));
     }
 
 }
