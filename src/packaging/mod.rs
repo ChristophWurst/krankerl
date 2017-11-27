@@ -19,7 +19,7 @@ use error;
 fn build_file_list(build_path: &Path, excludes: &exclude::ExcludedFiles) -> Vec<DirEntry> {
     WalkDir::new(build_path)
         .into_iter()
-        .filter_entry(|e| !excludes.is_excluded(e, build_path))
+        .filter_entry(|e| !excludes.is_excluded(e.path(), build_path))
         .map(|e| e.unwrap())
         .collect()
 }
