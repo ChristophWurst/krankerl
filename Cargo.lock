@@ -207,7 +207,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "futures-cpupool"
-version = "0.1.7"
+version = "0.1.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "futures 0.1.20 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -244,7 +244,7 @@ dependencies = [
  "base64 0.6.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bytes 0.4.5 (registry+https://github.com/rust-lang/crates.io-index)",
  "futures 0.1.20 (registry+https://github.com/rust-lang/crates.io-index)",
- "futures-cpupool 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
+ "futures-cpupool 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "httparse 1.2.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "language-tags 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "log 0.3.8 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -305,7 +305,7 @@ dependencies = [
  "flate2 0.2.20 (registry+https://github.com/rust-lang/crates.io-index)",
  "fs_extra 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "futures 0.1.20 (registry+https://github.com/rust-lang/crates.io-index)",
- "futures-cpupool 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
+ "futures-cpupool 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "globset 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "hex 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "nextcloud_appinfo 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -980,7 +980,7 @@ dependencies = [
 "checksum fuchsia-zircon 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "f6c0581a4e363262e52b87f59ee2afe3415361c6ec35e665924eb08afe8ff159"
 "checksum fuchsia-zircon-sys 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "43f3795b4bae048dc6123a6b972cadde2e676f9ded08aef6bb77f5f157684a82"
 "checksum futures 0.1.20 (registry+https://github.com/rust-lang/crates.io-index)" = "0c5a3176836efa0b37f0e321b86672dfada1564aeb516fbed67b7c24050a0263"
-"checksum futures-cpupool 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)" = "e86f49cc0d92fe1b97a5980ec32d56208272cbb00f15044ea9e2799dde766fdf"
+"checksum futures-cpupool 0.1.8 (registry+https://github.com/rust-lang/crates.io-index)" = "ab90cde24b3319636588d0c35fe03b1333857621051837ed769faefb4c2162e4"
 "checksum globset 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "464627f948c3190ae3d04b1bc6d7dca2f785bda0ac01278e6db129ad383dbeb6"
 "checksum hex 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "d6a22814455d41612f41161581c2883c0c6a1c41852729b17d5ed88f01e153aa"
 "checksum httparse 1.2.3 (registry+https://github.com/rust-lang/crates.io-index)" = "af2f2dd97457e8fb1ae7c5a420db346af389926e36f43768b96f101546b04a07"
