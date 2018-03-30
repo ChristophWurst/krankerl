@@ -5,7 +5,7 @@ authors = ["Christoph Wurst <christoph@winzerhof-wurst.at>"]
 description = "A CLI helper to manage Nextcloud apps"
 
 [dependencies]
-base64 = "0.7"
+base64 = "0.9"
 docopt = "0.8"
 flate2 = "0.2"
 futures = "0.1"
