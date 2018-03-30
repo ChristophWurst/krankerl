@@ -1,6 +1,7 @@
 # Krankerl
 
 [![Build Status](https://travis-ci.org/ChristophWurst/krankerl.svg?branch=master)](https://travis-ci.org/ChristophWurst/krankerl)
+[![AUR](https://img.shields.io/aur/version/krankerl.svg)](https://aur.archlinux.org/packages/krankerl/)
 
 A CLI helper to manage [Nextcloud](https://nextcloud.com/) apps.
 
