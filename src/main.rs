@@ -11,9 +11,9 @@ use std::path::Path;
 
 use docopt::Docopt;
 use futures::{future, Future};
-use krankerl::*;
 use krankerl::config::app::init_config;
 use krankerl::packaging::package_app;
+use krankerl::*;
 use tokio_core::reactor::Core;
 
 const USAGE: &'static str = "
@@ -64,8 +64,7 @@ fn main() {
         .unwrap_or_else(|e| e.exit());
 
     let mut core = Core::new().unwrap();
-    let mut pool_builder = futures_cpupool::Builder::new();
-    pool_builder.pool_size(2);
+    let mut pool_builder = futures_cpupool::CpuPool::new_num_cpus();
 
     if args.cmd_enable {
         enable_app().unwrap_or_else(|e| {
@@ -139,9 +138,9 @@ fn main() {
             Ok(signature) => return future::ok(signature),
             Err(err) => return future::err(err),
         }).and_then(|signature| {
-                println!("Package signature: {}", signature);
-                futures::future::ok(())
-            });
+            println!("Package signature: {}", signature);
+            futures::future::ok(())
+        });
 
         core.run(work).unwrap_or_else(|e| {
             println!("an error occured: {}", e);
