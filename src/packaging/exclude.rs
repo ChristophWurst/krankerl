@@ -14,17 +14,20 @@ impl ExcludedFiles {
     pub fn new(excludes: &Vec<String>) -> Result<Self, error::Error> {
         let mut builder = globset::GlobSetBuilder::new();
         for excl in excludes {
-            let glob = globset::GlobBuilder::new(excl)
-                .literal_separator(true)
-                .build()
-                .map_err(|_| {
-                    error::Error::Other(format!("could not build exclude for {}", excl))
-                })?;
+            let glob =
+                globset::GlobBuilder::new(excl)
+                    .literal_separator(true)
+                    .build()
+                    .map_err(|_| {
+                                 error::Error::Other(format!("could not build exclude for {}",
+                                                             excl))
+                             })?;
             builder.add(glob);
         }
-        let set = builder.build().map_err(|e| {
-            error::Error::Other(format!("could not build glob set: {}", e))
-        })?;
+        let set =
+            builder
+                .build()
+                .map_err(|e| error::Error::Other(format!("could not build glob set: {}", e)))?;
 
         Ok(ExcludedFiles { glob: set })
     }
@@ -55,14 +58,10 @@ mod tests {
 
         let excludes = ExcludedFiles::new(&rules).unwrap();
 
-        assert!(!excludes.is_excluded(
-            &Path::new("build/artefacts/app/js/build/build.js"),
-            &Path::new("build/artefacts/app")
-        ));
-        assert!(excludes.is_excluded(
-            &Path::new("build/artefacts/app/js/init.js"),
-            &Path::new("build/artefacts/app")
-        ));
+        assert!(!excludes.is_excluded(&Path::new("build/artefacts/app/js/build/build.js"),
+                                      &Path::new("build/artefacts/app")));
+        assert!(excludes.is_excluded(&Path::new("build/artefacts/app/js/init.js"),
+                                     &Path::new("build/artefacts/app")));
     }
 
 }

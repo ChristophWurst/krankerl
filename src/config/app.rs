@@ -34,9 +34,7 @@ impl AppConfig {
 
 impl Default for AppConfig {
     fn default() -> Self {
-        AppConfig {
-            package: PackageConfig::default(),
-        }
+        AppConfig { package: PackageConfig::default() }
     }
 }
 
@@ -78,12 +76,10 @@ impl Default for PackageConfig {
     fn default() -> Self {
         PackageConfig {
             before_cmds: vec![],
-            exclude: vec![
-                ".git".to_owned(),
-                ".gitignore".to_owned(),
-                "build".to_owned(),
-                "tests".to_owned(),
-            ],
+            exclude: vec![".git".to_owned(),
+                          ".gitignore".to_owned(),
+                          "build".to_owned(),
+                          "tests".to_owned()],
         }
     }
 }
@@ -93,15 +89,13 @@ pub fn init_config(app_path: &Path) -> Result<(), error::Error> {
     path_buf.push("krankerl.toml");
 
     if let Ok(_) = File::open(&path_buf) {
-        return Err(error::Error::Other(
-            "krankerl.toml already exists.".to_string(),
-        ));
+        return Err(error::Error::Other("krankerl.toml already exists.".to_string()));
     }
 
     let mut config_file = File::create(&path_buf)?;
 
-    config_file.write_all(
-        r#"[package]
+    config_file
+        .write_all(r#"[package]
 exclude = [
 
 ]
@@ -109,15 +103,14 @@ exclude = [
 before_cmds = [
 
 ]
-"#.as_bytes(),
-    )?;
+"#
+                           .as_bytes())?;
 
     Ok(())
 }
 
 fn load_config<R>(reader: &R) -> Result<String, error::Error>
-where
-    R: ConfigReader,
+    where R: ConfigReader
 {
     let as_string = reader.read()?;
 

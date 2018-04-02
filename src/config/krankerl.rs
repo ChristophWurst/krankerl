@@ -44,9 +44,9 @@ pub fn get_config() -> Result<Config, error::Error> {
 
     if contents.is_empty() {
         return Ok(Config {
-            appstore_token: None,
-            github_token: None,
-        });
+                      appstore_token: None,
+                      github_token: None,
+                  });
     }
 
     serde_json::from_str(&contents).map_err(|e| error::Error::Other(e.description().to_string()))
