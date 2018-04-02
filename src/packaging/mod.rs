@@ -38,7 +38,7 @@ fn package(artifacts_path: &Path,
              compressed_archive_path);
 
     let gz_archive_file = File::create(compressed_archive_path)?;
-    let encoder = GzEncoder::new(gz_archive_file, Compression::Default);
+    let encoder = GzEncoder::new(gz_archive_file, Compression::default());
 
     let mut app_path = PathBuf::from(artifacts_path);
     app_path.push(&app_id);
