@@ -24,21 +24,18 @@ fn build_file_list(build_path: &Path, excludes: &exclude::ExcludedFiles) -> Vec<
         .collect()
 }
 
-fn package(
-    artifacts_path: &Path,
-    app_id: &String,
-    app_config: &AppConfig,
-) -> Result<(), error::Error> {
+fn package(artifacts_path: &Path,
+           app_id: &String,
+           app_config: &AppConfig)
+           -> Result<(), error::Error> {
     let excludes = exclude::ExcludedFiles::new(app_config.package().exclude())?;
 
     let mut compressed_archive_path = PathBuf::from(artifacts_path);
     let mut compressed_archive_filename = app_id.clone();
     compressed_archive_filename.push_str(".tar.gz");
     compressed_archive_path.push(compressed_archive_filename);
-    println!(
-        "Writing compressed app archive to {:?}",
-        compressed_archive_path
-    );
+    println!("Writing compressed app archive to {:?}",
+             compressed_archive_path);
 
     let gz_archive_file = File::create(compressed_archive_path)?;
     let encoder = GzEncoder::new(gz_archive_file, Compression::Default);
@@ -57,9 +54,7 @@ fn package(
 fn ensure_config_exists(app_path: &Path) -> Result<(), error::Error> {
     match config::app::get_config(app_path) {
         Ok(_) => Ok(()),
-        Err(e) => Err(error::Error::Other(
-            format!("could not load krankerl.toml: {}", e),
-        )),
+        Err(e) => Err(error::Error::Other(format!("could not load krankerl.toml: {}", e))),
     }
 }
 
@@ -83,12 +78,13 @@ pub fn package_app() -> Result<(), error::Error> {
     artifacts::clear(&artifacts_path)?;
     artifacts_path.push(&app_id);
     artifacts::clone_app(&cwd, &artifacts_path)?;
-    let app_config = config::app::get_config(&artifacts_path).map(|config| {
-        config.unwrap_or_else(|| {
+    let app_config = config::app::get_config(&artifacts_path)
+        .map(|config| {
+                 config.unwrap_or_else(|| {
             println!("Warning: No krankerl.toml found. A default configuration is used.");
             AppConfig::default()
         })
-    })?;
+             })?;
     run_package_commands(&artifacts_path, app_config.package().into())?;
     package(package_path.as_path(), &app_id, &app_config)
 }

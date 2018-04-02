@@ -52,9 +52,7 @@ pub fn disable_app() -> Result<(), error::Error> {
 }
 
 fn get_home_dir() -> Result<PathBuf, error::Error> {
-    env::home_dir().ok_or(error::Error::Other(
-        "Could not resolve home dir".to_string(),
-    ))
+    env::home_dir().ok_or(error::Error::Other("Could not resolve home dir".to_string()))
 }
 
 fn get_private_key_path(app_id: &String) -> Result<PathBuf, error::Error> {
@@ -89,15 +87,12 @@ pub fn sign_package() -> Result<String, error::Error> {
     Ok(signature)
 }
 
-pub fn publish_app(
-    handle: &Handle,
-    url: &String,
-    is_nightly: bool,
-    signature: &String,
-    api_token: &String,
-) -> Box<futures::Future<Item = (), Error = error::Error>> {
-    Box::new(
-        nextcloud_appstore::publish_app(handle, url, is_nightly, signature, api_token)
-            .map_err(|e| error::Error::AppStore(e)),
-    )
+pub fn publish_app(handle: &Handle,
+                   url: &String,
+                   is_nightly: bool,
+                   signature: &String,
+                   api_token: &String)
+                   -> Box<futures::Future<Item = (), Error = error::Error>> {
+    Box::new(nextcloud_appstore::publish_app(handle, url, is_nightly, signature, api_token)
+                 .map_err(|e| error::Error::AppStore(e)))
 }

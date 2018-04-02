@@ -48,16 +48,12 @@ impl PackageCommands for CommandList {
 
 impl<'a> Into<CommandList> for &'a PackageConfig {
     fn into(self) -> CommandList {
-        CommandList {
-            cmds: self.before_cmds().clone(),
-        }
+        CommandList { cmds: self.before_cmds().clone() }
     }
 }
 
 impl Into<CommandList> for PackageConfig {
     fn into(self) -> CommandList {
-        CommandList {
-            cmds: self.before_cmds().clone(),
-        }
+        CommandList { cmds: self.before_cmds().clone() }
     }
 }

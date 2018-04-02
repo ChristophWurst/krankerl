@@ -20,9 +20,7 @@ pub fn clear(path: &Path) -> Result<(), error::Error> {
     if let Err(e) = fs::remove_dir_all(path) {
         // We can savely ignoe NotFound errors here
         if e.kind() != io::ErrorKind::NotFound {
-            return Err(error::Error::Other(
-                "could not delete artifacts dir".to_string(),
-            ));
+            return Err(error::Error::Other("could not delete artifacts dir".to_string()));
         }
     }
     fs::create_dir_all(path)?;
