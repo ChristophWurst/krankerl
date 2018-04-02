@@ -64,7 +64,7 @@ fn main() {
         .unwrap_or_else(|e| e.exit());
 
     let mut core = Core::new().unwrap();
-    let mut pool_builder = futures_cpupool::CpuPool::new_num_cpus();
+    let pool = futures_cpupool::CpuPool::new_num_cpus();
 
     if args.cmd_enable {
         enable_app().unwrap_or_else(|e| {
@@ -133,7 +133,6 @@ fn main() {
             println!("an error occured: {:?}", e);
         });
     } else if args.cmd_sign && args.flag_package {
-        let pool = pool_builder.create();
         let work = pool.spawn_fn(|| match sign_package() {
             Ok(signature) => return future::ok(signature),
             Err(err) => return future::err(err),
