@@ -6,6 +6,8 @@ rust:
 
 branches:
   only:
+  - staging
+  - trying
   - master
 
 cache: cargo
