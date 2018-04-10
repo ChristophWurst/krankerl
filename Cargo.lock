@@ -359,7 +359,7 @@ dependencies = [
  "hex 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "nextcloud_appinfo 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "nextcloud_appsignature 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "nextcloud_appstore 0.3.1",
+ "nextcloud_appstore 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "openssl 0.10.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "pathdiff 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.37 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -521,6 +521,7 @@ dependencies = [
 [[package]]
 name = "nextcloud_appstore"
 version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "failure 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "futures 0.1.21 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1248,6 +1249,7 @@ dependencies = [
 "checksum net2 0.2.32 (registry+https://github.com/rust-lang/crates.io-index)" = "9044faf1413a1057267be51b5afba8eb1090bd2231c693664aa1db716fe1eae0"
 "checksum nextcloud_appinfo 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)" = "8ee587cf43549f0cf6bc43ec7e4e236c3d6506d9b6b0b336b8e994dfb21407af"
 "checksum nextcloud_appsignature 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "fa8f2818f2f9a5eb1fcada84f44716be1a6c2fd5e1af4ba7487045f49de96b98"
+"checksum nextcloud_appstore 0.3.1 (registry+https://github.com/rust-lang/crates.io-index)" = "eb0cbe3b64d582702a8fb594d915a7cb79fab910a785bf8f12225abb811cd758"
 "checksum nodrop 0.1.12 (registry+https://github.com/rust-lang/crates.io-index)" = "9a2228dca57108069a5262f2ed8bd2e82496d2e074a06d1ccc7ce1687b6ae0a2"
 "checksum num-traits 0.2.2 (registry+https://github.com/rust-lang/crates.io-index)" = "dee092fcdf725aee04dd7da1d21debff559237d49ef1cb3e69bcb8ece44c7364"
 "checksum num_cpus 1.8.0 (registry+https://github.com/rust-lang/crates.io-index)" = "c51a3322e4bca9d212ad9a158a02abc6934d005490c054a2778df73a70aa0a30"
