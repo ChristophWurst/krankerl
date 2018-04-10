@@ -3,17 +3,16 @@ use std::io;
 use std::path::Path;
 use std::vec::Vec;
 
+use failure::Error;
 use pathdiff::diff_paths;
 use tar::Builder;
 use walkdir::DirEntry;
-
-use error;
 
 pub fn build_app_archive<W>(root: &Path,
                             app_path: &Path,
                             files: Vec<DirEntry>,
                             dest: W)
-                            -> Result<W, error::Error>
+                            -> Result<W, Error>
     where W: io::Write
 {
     let mut archive = Builder::new(dest);

@@ -1,6 +1,7 @@
 use std::fs::File;
 use std::path::{Path, PathBuf};
 
+use failure::Error;
 use flate2::Compression;
 use flate2::write::GzEncoder;
 use nextcloud_appinfo::get_appinfo;
@@ -14,7 +15,6 @@ mod exclude;
 use config;
 use self::commands::PackageCommands;
 use config::app::AppConfig;
-use error;
 
 fn build_file_list(build_path: &Path, excludes: &exclude::ExcludedFiles) -> Vec<DirEntry> {
     WalkDir::new(build_path)
@@ -24,10 +24,7 @@ fn build_file_list(build_path: &Path, excludes: &exclude::ExcludedFiles) -> Vec<
         .collect()
 }
 
-fn package(artifacts_path: &Path,
-           app_id: &String,
-           app_config: &AppConfig)
-           -> Result<(), error::Error> {
+fn package(artifacts_path: &Path, app_id: &String, app_config: &AppConfig) -> Result<(), Error> {
     let excludes = exclude::ExcludedFiles::new(app_config.package().exclude())?;
 
     let mut compressed_archive_path = PathBuf::from(artifacts_path);
@@ -51,18 +48,18 @@ fn package(artifacts_path: &Path,
     Ok(())
 }
 
-fn ensure_config_exists(app_path: &Path) -> Result<(), error::Error> {
+fn ensure_config_exists(app_path: &Path) -> Result<(), Error> {
     match config::app::get_config(app_path) {
         Ok(_) => Ok(()),
-        Err(e) => Err(error::Error::Other(format!("could not load krankerl.toml: {}", e))),
+        Err(e) => Err(format_err!("could not load krankerl.toml: {}", e)),
     }
 }
 
-fn run_package_commands(app_path: &Path, cmds: commands::CommandList) -> Result<(), error::Error> {
+fn run_package_commands(app_path: &Path, cmds: commands::CommandList) -> Result<(), Error> {
     cmds.execute(app_path)
 }
 
-pub fn package_app() -> Result<(), error::Error> {
+pub fn package_app() -> Result<(), Error> {
     let cwd = Path::new(".");
     let mut artifacts_path = PathBuf::from(cwd);
     artifacts_path.push("build");

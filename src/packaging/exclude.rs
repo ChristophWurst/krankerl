@@ -1,33 +1,27 @@
 use std::path::Path;
 use std::vec::Vec;
 
+use failure::Error;
 use globset;
 use pathdiff::diff_paths;
-
-use error;
 
 pub struct ExcludedFiles {
     glob: globset::GlobSet,
 }
 
 impl ExcludedFiles {
-    pub fn new(excludes: &Vec<String>) -> Result<Self, error::Error> {
+    pub fn new(excludes: &Vec<String>) -> Result<Self, Error> {
         let mut builder = globset::GlobSetBuilder::new();
         for excl in excludes {
-            let glob =
-                globset::GlobBuilder::new(excl)
-                    .literal_separator(true)
-                    .build()
-                    .map_err(|_| {
-                                 error::Error::Other(format!("could not build exclude for {}",
-                                                             excl))
-                             })?;
+            let glob = globset::GlobBuilder::new(excl)
+                .literal_separator(true)
+                .build()
+                .map_err(|_| format_err!("could not build exclude for {}", excl))?;
             builder.add(glob);
         }
-        let set =
-            builder
-                .build()
-                .map_err(|e| error::Error::Other(format!("could not build glob set: {}", e)))?;
+        let set = builder
+            .build()
+            .map_err(|e| format_err!("could not build glob set: {}", e))?;
 
         Ok(ExcludedFiles { glob: set })
     }

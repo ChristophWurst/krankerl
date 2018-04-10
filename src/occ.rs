@@ -2,7 +2,7 @@ use std::convert;
 use std::ffi;
 use std::process::Command;
 
-use super::error;
+use failure::Error;
 
 pub struct Occ<P> {
     path: P,
@@ -19,19 +19,18 @@ impl<P> Occ<P>
         Command::new(&self.path)
     }
 
-    fn invoke_command(&self, mut cmd: Command) -> Result<(), error::Error> {
-        cmd.status()
-            .map(|_status| ())
-            .map_err(|e| error::Error::Io(e))
+    fn invoke_command(&self, mut cmd: Command) -> Result<(), Error> {
+        cmd.status()?;
+        Ok(())
     }
 
-    pub fn enable_app(&self, app_id: &String) -> Result<(), error::Error> {
+    pub fn enable_app(&self, app_id: &String) -> Result<(), Error> {
         let mut cmd = self.start_command();
         cmd.arg("app:enable").arg(app_id);
         self.invoke_command(cmd)
     }
 
-    pub fn disable_app(&self, app_id: &String) -> Result<(), error::Error> {
+    pub fn disable_app(&self, app_id: &String) -> Result<(), Error> {
         let mut cmd = self.start_command();
         cmd.arg("app:disable").arg(app_id);
         self.invoke_command(cmd)

@@ -3,9 +3,10 @@ use std::io;
 use std::path::Path;
 use std::process::Command;
 
+use failure::Error;
 use error;
 
-pub fn clone_app(src: &Path, dst: &Path) -> Result<(), error::Error> {
+pub fn clone_app(src: &Path, dst: &Path) -> Result<(), Error> {
     // TODO: use libgit2 instead
     Command::new("git")
         .arg("clone")
@@ -16,11 +17,13 @@ pub fn clone_app(src: &Path, dst: &Path) -> Result<(), error::Error> {
     Ok(())
 }
 
-pub fn clear(path: &Path) -> Result<(), error::Error> {
+pub fn clear(path: &Path) -> Result<(), Error> {
     if let Err(e) = fs::remove_dir_all(path) {
         // We can savely ignoe NotFound errors here
         if e.kind() != io::ErrorKind::NotFound {
-            return Err(error::Error::Other("could not delete artifacts dir".to_string()));
+            bail!(error::KrankerlError::Other {
+                      cause: "could not delete artifacts dir".to_string(),
+                  });
         }
     }
     fs::create_dir_all(path)?;
