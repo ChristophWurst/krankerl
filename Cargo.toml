@@ -3,6 +3,12 @@ name = "krankerl"
 version = "0.5.0"
 authors = ["Christoph Wurst <christoph@winzerhof-wurst.at>"]
 description = "A CLI helper to manage Nextcloud apps"
+license-file = "LICENSE"
+keywords = ["nextcloud", "cli"]
+categories = ["development-tools", "development-tools::build-utils"]
+
+[badges]
+travis-ci = { repository = "ChristophWurst/krankerl", branch = "master" }
 
 [dependencies]
 base64 = "0.9"
