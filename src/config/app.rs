@@ -1,10 +1,11 @@
 use std::convert::Into;
 use std::default::Default;
-use std::error::Error;
+use std::error::Error as StdErr;
 use std::fs::File;
 use std::io::prelude::*;
 use std::path::Path;
 
+use failure::Error;
 use toml;
 
 use super::{ConfigFileReader, ConfigReader};
@@ -84,12 +85,12 @@ impl Default for PackageConfig {
     }
 }
 
-pub fn init_config(app_path: &Path) -> Result<(), error::Error> {
+pub fn init_config(app_path: &Path) -> Result<(), Error> {
     let mut path_buf = app_path.to_path_buf();
     path_buf.push("krankerl.toml");
 
     if let Ok(_) = File::open(&path_buf) {
-        return Err(error::Error::Other("krankerl.toml already exists.".to_string()));
+        bail!(error::KrankerlError::Other { cause: "krankerl.toml already exists.".to_string() });
     }
 
     let mut config_file = File::create(&path_buf)?;
@@ -109,7 +110,7 @@ before_cmds = [
     Ok(())
 }
 
-fn load_config<R>(reader: &R) -> Result<String, error::Error>
+fn load_config<R>(reader: &R) -> Result<String, Error>
     where R: ConfigReader
 {
     let as_string = reader.read()?;
@@ -117,16 +118,14 @@ fn load_config<R>(reader: &R) -> Result<String, error::Error>
     Ok(as_string)
 }
 
-fn parse_config(config: String) -> Result<ParsedAppConfig, error::Error> {
+fn parse_config(config: String) -> Result<ParsedAppConfig, Error> {
     toml::from_str(&config).map_err(|e| {
-        error::Error::Other(format!(
-            "could not parse krankerl.toml: {}",
-            e.description()
-        ))
-    })
+                                        format_err!("could not parse krankerl.toml: {}",
+                                                    e.description())
+                                    })
 }
 
-pub fn get_config(path: &Path) -> Result<Option<AppConfig>, error::Error> {
+pub fn get_config(path: &Path) -> Result<Option<AppConfig>, Error> {
     let mut path_buf = path.to_path_buf();
     path_buf.push("krankerl.toml");
     let reader = ConfigFileReader::new(path_buf);
@@ -156,7 +155,7 @@ mod tests {
             true
         }
 
-        fn read(&self) -> Result<String, error::Error> {
+        fn read(&self) -> Result<String, Error> {
             Ok("some config".to_owned())
         }
     }

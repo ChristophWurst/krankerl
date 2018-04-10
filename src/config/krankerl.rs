@@ -1,10 +1,8 @@
+use failure::Error;
 use serde_json;
-use std::error::Error;
 use std::fs::OpenOptions;
 use std::io::prelude::*;
 use xdg;
-
-use error;
 
 #[derive(Debug, Deserialize, Serialize)]
 pub struct Config {
@@ -12,7 +10,7 @@ pub struct Config {
     pub github_token: Option<String>,
 }
 
-pub fn set_appstore_token(token: &String) -> Result<(), error::Error> {
+pub fn set_appstore_token(token: &String) -> Result<(), Error> {
     let mut config = get_config()?;
 
     config.appstore_token = Some(token.to_owned());
@@ -21,7 +19,7 @@ pub fn set_appstore_token(token: &String) -> Result<(), error::Error> {
     Ok(())
 }
 
-pub fn set_github_token(token: &String) -> Result<(), error::Error> {
+pub fn set_github_token(token: &String) -> Result<(), Error> {
     let mut config = get_config()?;
 
     config.github_token = Some(token.to_owned());
@@ -30,9 +28,8 @@ pub fn set_github_token(token: &String) -> Result<(), error::Error> {
     Ok(())
 }
 
-pub fn get_config() -> Result<Config, error::Error> {
-    let xdg_dirs = xdg::BaseDirectories::with_prefix("krankerl")
-        .map_err(|e| error::Error::Other(e.description().to_string()))?;
+pub fn get_config() -> Result<Config, Error> {
+    let xdg_dirs = xdg::BaseDirectories::with_prefix("krankerl")?;
     let config_path = xdg_dirs.place_config_file("config.json")?;
     let mut config_file = OpenOptions::new()
         .read(true)
@@ -49,20 +46,24 @@ pub fn get_config() -> Result<Config, error::Error> {
                   });
     }
 
-    serde_json::from_str(&contents).map_err(|e| error::Error::Other(e.description().to_string()))
+    let config =
+        serde_json::from_str(&contents).map_err(|err| {
+                                                    format_err!("could not parse config.json: {}",
+                                                                err)
+                                                });
+
+    config
 }
 
-fn save_config(config: &Config) -> Result<(), error::Error> {
-    let xdg_dirs = xdg::BaseDirectories::with_prefix("krankerl")
-        .map_err(|e| error::Error::Other(e.description().to_string()))?;
+fn save_config(config: &Config) -> Result<(), Error> {
+    let xdg_dirs = xdg::BaseDirectories::with_prefix("krankerl")?;
     let config_path = xdg_dirs.place_config_file("config.json")?;
     let mut config_file = OpenOptions::new()
         .write(true)
         .create(true)
         .open(config_path)?;
 
-    let serialized = serde_json::to_string_pretty(config)
-        .map_err(|e| error::Error::Other(e.description().to_string()))?;
+    let serialized = serde_json::to_string_pretty(config)?;
 
     config_file.write_all(serialized.as_bytes())?;
 

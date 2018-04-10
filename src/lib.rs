@@ -1,4 +1,6 @@
 extern crate base64;
+#[macro_use]
+extern crate failure;
 extern crate flate2;
 #[cfg(test)]
 extern crate fs_extra;
@@ -31,31 +33,33 @@ pub mod packaging;
 use std::env;
 use std::path::{Path, PathBuf};
 
-use futures::Future;
+use failure::Error;
 use nextcloud_appinfo::get_appinfo;
 pub use nextcloud_appstore::{get_apps_and_releases, get_categories};
 use tokio_core::reactor::Handle;
 use occ::Occ;
 
-pub fn enable_app() -> Result<(), error::Error> {
+pub fn enable_app() -> Result<(), Error> {
     let app_path = Path::new(".").canonicalize()?;
     let info = get_appinfo(&app_path)?;
     let occ = Occ::new("../../occ");
     occ.enable_app(info.id())
 }
 
-pub fn disable_app() -> Result<(), error::Error> {
+pub fn disable_app() -> Result<(), Error> {
     let app_path = Path::new(".").canonicalize()?;
     let info = get_appinfo(&app_path)?;
     let occ = Occ::new("../../occ");
     occ.disable_app(info.id())
 }
 
-fn get_home_dir() -> Result<PathBuf, error::Error> {
-    env::home_dir().ok_or(error::Error::Other("Could not resolve home dir".to_string()))
+fn get_home_dir() -> Result<PathBuf, Error> {
+    env::home_dir().ok_or(format_err!(
+        "Could not resolve home dir",
+    ))
 }
 
-fn get_private_key_path(app_id: &String) -> Result<PathBuf, error::Error> {
+fn get_private_key_path(app_id: &String) -> Result<PathBuf, Error> {
     let mut key_path = get_home_dir()?;
     key_path.push(".nextcloud");
     key_path.push("certificates");
@@ -63,7 +67,7 @@ fn get_private_key_path(app_id: &String) -> Result<PathBuf, error::Error> {
     Ok(key_path)
 }
 
-fn get_package_path(app_id: &String) -> Result<PathBuf, error::Error> {
+fn get_package_path(app_id: &String) -> Result<PathBuf, Error> {
     let mut path = PathBuf::from(".").canonicalize()?;
     path.push("build");
     path.push("artifacts");
@@ -71,7 +75,7 @@ fn get_package_path(app_id: &String) -> Result<PathBuf, error::Error> {
     Ok(path)
 }
 
-pub fn sign_package() -> Result<String, error::Error> {
+pub fn sign_package() -> Result<String, Error> {
     let app_path = Path::new(".").canonicalize()?;
     let appinfo = get_appinfo(&app_path)?;
     let app_id = appinfo.id();
@@ -79,7 +83,7 @@ pub fn sign_package() -> Result<String, error::Error> {
     let package_path = get_package_path(app_id)?;
 
     if !package_path.exists() {
-        return Err(error::Error::Other("No package found".to_string()));
+        return Err(format_err!("No package found"));
     }
 
     let signature = nextcloud_appsignature::sign_package(&key_path, &package_path)?;
@@ -92,7 +96,6 @@ pub fn publish_app(handle: &Handle,
                    is_nightly: bool,
                    signature: &String,
                    api_token: &String)
-                   -> Box<futures::Future<Item = (), Error = error::Error>> {
-    Box::new(nextcloud_appstore::publish_app(handle, url, is_nightly, signature, api_token)
-                 .map_err(|e| error::Error::AppStore(e)))
+                   -> Box<futures::Future<Item = (), Error = Error>> {
+    Box::new(nextcloud_appstore::publish_app(handle, url, is_nightly, signature, api_token))
 }

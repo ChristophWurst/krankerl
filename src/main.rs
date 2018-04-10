@@ -122,13 +122,19 @@ fn main() {
         let signing = future::lazy(|| sign_package());
         let handle = core.handle();
 
-        let work = signing.and_then(|signature| {
-            let config = config::krankerl::get_config().expect("could not load config");
-            assert!(config.appstore_token.is_some());
-            let api_token = config.appstore_token.unwrap();
+        let work = signing
+            .and_then(|signature| {
+                          let config =
+                              config::krankerl::get_config().expect("could not load config");
+                          assert!(config.appstore_token.is_some());
+                          let api_token = config.appstore_token.unwrap();
 
-            publish_app(&handle, &url, is_nightly, &signature, &api_token)
-        });
+                          publish_app(&handle, &url, is_nightly, &signature, &api_token)
+                      })
+            .and_then(|_| {
+                          println!("app released successfully");
+                          Ok(())
+                      });
 
         core.run(work)
             .unwrap_or_else(|e| {
