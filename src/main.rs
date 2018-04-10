@@ -128,6 +128,9 @@ fn main() {
             let api_token = config.appstore_token.unwrap();
 
             publish_app(&handle, &url, is_nightly, &signature, &api_token)
+        }).and_then(|_| {
+            println!("app released successfully");
+            Ok(())
         });
 
         core.run(work)
