@@ -12,9 +12,9 @@ Usage:
   krankerl init
   krankerl list apps <version>
   krankerl list categories
-  krankerl login [--appstore | --github] <token>
+  krankerl login (--appstore | --github) <token>
   krankerl package
-  krankerl publish (--nightly) <url>
+  krankerl publish [--nightly] <url>
   krankerl sign --package
   krankerl --version
 
