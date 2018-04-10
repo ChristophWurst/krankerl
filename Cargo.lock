@@ -346,7 +346,7 @@ dependencies = [
 
 [[package]]
 name = "krankerl"
-version = "0.5.0"
+version = "0.5.1"
 dependencies = [
  "base64 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "docopt 0.8.3 (registry+https://github.com/rust-lang/crates.io-index)",
