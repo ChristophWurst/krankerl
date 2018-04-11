@@ -9,9 +9,11 @@ extern crate futures_cpupool;
 extern crate globset;
 extern crate hex;
 
+extern crate composer;
 extern crate nextcloud_appinfo;
 extern crate nextcloud_appsignature;
 extern crate nextcloud_appstore;
+extern crate npm_scripts;
 extern crate openssl;
 extern crate pathdiff;
 #[macro_use]
@@ -25,6 +27,7 @@ extern crate toml;
 extern crate walkdir;
 extern crate xdg;
 
+pub mod commands;
 pub mod config;
 pub mod error;
 pub mod occ;
@@ -83,7 +86,7 @@ pub fn sign_package() -> Result<String, Error> {
     let package_path = get_package_path(app_id)?;
 
     if !package_path.exists() {
-        return Err(format_err!("No package found"));
+        bail!("No package found");
     }
 
     let signature = nextcloud_appsignature::sign_package(&key_path, &package_path)?;

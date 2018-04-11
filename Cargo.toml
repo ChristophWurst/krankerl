@@ -1,6 +1,6 @@
 [package]
 name = "krankerl"
-version = "0.5.1"
+version = "0.6.0"
 authors = ["Christoph Wurst <christoph@winzerhof-wurst.at>"]
 description = "A CLI helper to manage Nextcloud apps"
 license-file = "LICENSE"
@@ -12,6 +12,7 @@ travis-ci = { repository = "ChristophWurst/krankerl", branch = "master" }
 
 [dependencies]
 base64 = "0.9"
+composer = "0.1"
 docopt = "0.8"
 failure = "0.1.1"
 flate2 = "1.0"
@@ -22,6 +23,7 @@ globset = "0.3.0"
 nextcloud_appinfo = "0.3.0"
 nextcloud_appsignature = "0.2.0"
 nextcloud_appstore = "0.3.1"
+npm_scripts = "0.1.2"
 serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0"
