@@ -16,6 +16,7 @@ Usage:
   krankerl package
   krankerl publish [--nightly] <url>
   krankerl sign --package
+  krankerl up
   krankerl --version
 
 Options:

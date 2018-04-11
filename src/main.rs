@@ -7,7 +7,7 @@ extern crate nextcloud_appstore;
 extern crate serde_derive;
 extern crate tokio_core;
 
-use std::path::Path;
+use std::path::{Path, PathBuf};
 
 use docopt::Docopt;
 use futures::{future, Future};
@@ -29,6 +29,7 @@ Usage:
   krankerl package
   krankerl publish [--nightly] <url>
   krankerl sign --package
+  krankerl up
   krankerl --version
 
 Options:
@@ -51,6 +52,7 @@ struct Args {
     cmd_package: bool,
     cmd_publish: bool,
     cmd_sign: bool,
+    cmd_up: bool,
     flag_appstore: bool,
     flag_github: bool,
     flag_nightly: bool,
@@ -154,6 +156,11 @@ fn main() {
             .unwrap_or_else(|e| {
                                 println!("an error occured: {}", e);
                             });
+    } else if args.cmd_up {
+        let cwd = PathBuf::from(".");
+        krankerl::commands::up(&cwd).unwrap_or_else(|e| {
+                                                        println!("an error occured: {}", e);
+                                                    });
     } else if args.flag_version {
         println!(env!("CARGO_PKG_VERSION"));
     }
