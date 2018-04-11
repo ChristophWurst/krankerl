@@ -86,7 +86,7 @@ pub fn sign_package() -> Result<String, Error> {
     let package_path = get_package_path(app_id)?;
 
     if !package_path.exists() {
-        return Err(format_err!("No package found"));
+        bail!("No package found");
     }
 
     let signature = nextcloud_appsignature::sign_package(&key_path, &package_path)?;
