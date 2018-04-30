@@ -9,17 +9,21 @@ fn npm_up(app_path: &PathBuf) -> Result<(), Error> {
     let scripts = NpmScripts::new(app_path);
 
     if !scripts.is_available() {
-        println!("no package.json available, skipping npm installation");
+        println!("No npm config found, skipping npm installation.");
         return Ok(());
+    } else {
+        println!("Found npm config, installing packages …");
+        scripts.install()?;
+        println!("Installed npm packages.");
     }
-    scripts.install()?;
 
     let has_npm_build_task = scripts.has_script(&npm_script)?;
     if has_npm_build_task {
+        println!("Found npm build script, running it …");
         scripts.run_script(&npm_script)?;
         println!("Ran npm build script.");
     } else {
-        bail!("no package.json or npm build task found");
+        println!("No npm build task found, skipping build step.");
     }
     Ok(())
 }
@@ -27,10 +31,11 @@ fn npm_up(app_path: &PathBuf) -> Result<(), Error> {
 fn composer_up(app_path: &PathBuf) -> Result<(), Error> {
     let composer = Composer::new(app_path);
     if composer.is_available() {
+        println!("Found composer config, installing packages …");
         composer.install()?;
         println!("Installed composer packages.");
     } else {
-        println!("no composer.json found, skipping composer installation");
+        println!("No composer config found, skipping composer installation.");
     }
     Ok(())
 }
