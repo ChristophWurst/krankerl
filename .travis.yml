@@ -9,6 +9,8 @@ branches:
   - staging
   - trying
   - master
+  - "/^stable\\d+(\\.\\d+)?$/"
+  - "/^v\\d++(\\.\\d+)?+(\\.\\d+)?+(\\.\\d+)?$/"
 
 cache: cargo
 
