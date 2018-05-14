@@ -70,12 +70,12 @@ fn main() {
 
     if args.cmd_enable {
         enable_app().unwrap_or_else(|e| {
-                                        println!("an error occured: {}", e);
-                                    });
+            println!("an error occured: {}", e);
+        });
     } else if args.cmd_disable {
         disable_app().unwrap_or_else(|e| {
-                                         println!("an error occured: {}", e);
-                                     });
+            println!("an error occured: {}", e);
+        });
     } else if args.cmd_init {
         let cwd = Path::new(".");
         match init_config(&cwd) {
@@ -99,12 +99,11 @@ fn main() {
         core.run(work).unwrap();
     } else if args.cmd_list && args.cmd_categories {
         let work = get_categories(&core.handle()).map(|cats| {
-                                                          println!("found {} categories:",
-                                                                   cats.len());
-                                                          for cat in cats {
-                                                              println!("- {}", cat.id)
-                                                          }
-                                                      });
+            println!("found {} categories:", cats.len());
+            for cat in cats {
+                println!("- {}", cat.id)
+            }
+        });
 
         core.run(work).unwrap();
     } else if args.cmd_login {
@@ -126,41 +125,37 @@ fn main() {
 
         let work = signing
             .and_then(|signature| {
-                          let config =
-                              config::krankerl::get_config().expect("could not load config");
-                          assert!(config.appstore_token.is_some());
-                          let api_token = config.appstore_token.unwrap();
+                let config = config::krankerl::get_config().expect("could not load config");
+                assert!(config.appstore_token.is_some());
+                let api_token = config.appstore_token.unwrap();
 
-                          publish_app(&handle, &url, is_nightly, &signature, &api_token)
-                      })
+                publish_app(&handle, &url, is_nightly, &signature, &api_token)
+            })
             .and_then(|_| {
-                          println!("app released successfully");
-                          Ok(())
-                      });
+                println!("app released successfully");
+                Ok(())
+            });
 
-        core.run(work)
-            .unwrap_or_else(|e| {
-                                println!("an error occured: {:?}", e);
-                            });
+        core.run(work).unwrap_or_else(|e| {
+            println!("an error occured: {:?}", e);
+        });
     } else if args.cmd_sign && args.flag_package {
         let work = pool.spawn_fn(|| match sign_package() {
-                                     Ok(signature) => return future::ok(signature),
-                                     Err(err) => return future::err(err),
-                                 })
-            .and_then(|signature| {
-                          println!("Package signature: {}", signature);
-                          futures::future::ok(())
-                      });
+            Ok(signature) => return future::ok(signature),
+            Err(err) => return future::err(err),
+        }).and_then(|signature| {
+                println!("Package signature: {}", signature);
+                futures::future::ok(())
+            });
 
-        core.run(work)
-            .unwrap_or_else(|e| {
-                                println!("an error occured: {}", e);
-                            });
+        core.run(work).unwrap_or_else(|e| {
+            println!("an error occured: {}", e);
+        });
     } else if args.cmd_up {
         let cwd = PathBuf::from(".");
         krankerl::commands::up(&cwd).unwrap_or_else(|e| {
-                                                        println!("an error occured: {}", e);
-                                                    });
+            println!("an error occured: {}", e);
+        });
     } else if args.flag_version {
         println!(env!("CARGO_PKG_VERSION"));
     }
