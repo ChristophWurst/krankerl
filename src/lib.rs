@@ -5,7 +5,6 @@ extern crate flate2;
 #[cfg(test)]
 extern crate fs_extra;
 extern crate futures;
-extern crate futures_cpupool;
 extern crate globset;
 extern crate hex;
 extern crate indicatif;

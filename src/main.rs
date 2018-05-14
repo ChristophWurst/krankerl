@@ -1,6 +1,5 @@
 extern crate docopt;
 extern crate futures;
-extern crate futures_cpupool;
 extern crate krankerl;
 #[macro_use]
 extern crate serde_derive;
@@ -65,7 +64,6 @@ fn main() {
         .unwrap_or_else(|e| e.exit());
 
     let mut core = Core::new().unwrap();
-    let pool = futures_cpupool::CpuPool::new_num_cpus();
 
     if args.cmd_enable {
         enable_app().unwrap_or_else(|e| {
@@ -139,17 +137,11 @@ fn main() {
             println!("an error occured: {:?}", e);
         });
     } else if args.cmd_sign && args.flag_package {
-        let work = pool.spawn_fn(|| match sign_package() {
-            Ok(signature) => return future::ok(signature),
-            Err(err) => return future::err(err),
-        }).and_then(|signature| {
-                println!("Package signature: {}", signature);
-                futures::future::ok(())
-            });
-
-        core.run(work).unwrap_or_else(|e| {
-            println!("an error occured: {}", e);
-        });
+        let signature = sign_package();
+        match signature {
+            Ok(signature) => println!("Package signature: {}", signature),
+            Err(err) => println!("an error occured: {}", err),
+        }
     } else if args.cmd_up {
         let cwd = PathBuf::from(".");
         krankerl::commands::up(&cwd).unwrap_or_else(|e| {
