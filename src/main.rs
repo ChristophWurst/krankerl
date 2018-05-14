@@ -2,7 +2,6 @@ extern crate docopt;
 extern crate futures;
 extern crate futures_cpupool;
 extern crate krankerl;
-extern crate nextcloud_appstore;
 #[macro_use]
 extern crate serde_derive;
 extern crate tokio_core;
