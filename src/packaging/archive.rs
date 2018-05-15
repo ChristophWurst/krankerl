@@ -21,7 +21,6 @@ pub fn build_app_archive<W>(root: &Path,
         if !entry.metadata().unwrap().is_dir() {
             let entry_path = entry.path();
             if let Some(normalized) = diff_paths(&entry_path, &app_path) {
-                println!("Packaging file {:?}", entry.path());
                 let mut file_path = root.to_path_buf();
                 file_path.push(&normalized);
                 let mut file = File::open(&entry_path)?;
