@@ -1,4 +1,6 @@
 extern crate base64;
+extern crate composer;
+extern crate console;
 #[macro_use]
 extern crate failure;
 extern crate flate2;
@@ -8,7 +10,6 @@ extern crate futures;
 extern crate globset;
 extern crate hex;
 extern crate indicatif;
-extern crate composer;
 extern crate nextcloud_appinfo;
 extern crate nextcloud_appsignature;
 extern crate nextcloud_appstore;
@@ -28,7 +29,7 @@ extern crate xdg;
 
 pub mod commands;
 pub mod config;
-mod console;
+mod console_helper;
 pub mod error;
 pub mod occ;
 pub mod packaging;
@@ -57,9 +58,7 @@ pub fn disable_app() -> Result<(), Error> {
 }
 
 fn get_home_dir() -> Result<PathBuf, Error> {
-    env::home_dir().ok_or(format_err!(
-        "Could not resolve home dir",
-    ))
+    env::home_dir().ok_or(format_err!("Could not resolve home dir",))
 }
 
 fn get_private_key_path(app_id: &String) -> Result<PathBuf, Error> {
@@ -94,11 +93,18 @@ pub fn sign_package() -> Result<String, Error> {
     Ok(signature)
 }
 
-pub fn publish_app(handle: &Handle,
-                   url: &String,
-                   is_nightly: bool,
-                   signature: &String,
-                   api_token: &String)
-                   -> Box<futures::Future<Item = (), Error = Error>> {
-    Box::new(nextcloud_appstore::publish_app(handle, url, is_nightly, signature, api_token))
+pub fn publish_app(
+    handle: &Handle,
+    url: &String,
+    is_nightly: bool,
+    signature: &String,
+    api_token: &String,
+) -> Box<futures::Future<Item = (), Error = Error>> {
+    Box::new(nextcloud_appstore::publish_app(
+        handle,
+        url,
+        is_nightly,
+        signature,
+        api_token,
+    ))
 }

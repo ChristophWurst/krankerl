@@ -15,7 +15,7 @@ mod commands;
 mod exclude;
 
 use config;
-use console::default_spinner;
+use console_helper::default_spinner;
 use self::commands::PackageCommands;
 use config::app::AppConfig;
 
@@ -56,10 +56,7 @@ fn package(
     let encoder = archive::build_app_archive(&base, &app_path, file_list, encoder)?;
     encoder.finish()?;
 
-    progress.finish_with_message(&format!(
-        "Packaged app as {:?}",
-        compressed_archive_path
-    ));
+    progress.finish_with_message(&format!("Packaged app as {:?}", compressed_archive_path));
     Ok(())
 }
 

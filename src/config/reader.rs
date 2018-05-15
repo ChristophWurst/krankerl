@@ -16,7 +16,8 @@ pub struct ConfigFileReader {
 
 impl ConfigFileReader {
     pub fn new<P>(path: P) -> Self
-        where P: Into<PathBuf>
+    where
+        P: Into<PathBuf>,
     {
         ConfigFileReader { path: path.into() }
     }

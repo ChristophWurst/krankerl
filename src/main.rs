@@ -24,6 +24,7 @@ Usage:
   krankerl list apps <version>
   krankerl list categories
   krankerl login (--appstore | --github) <token>
+  krankerl logs [--follow]
   krankerl package
   krankerl publish [--nightly] <url>
   krankerl sign --package
@@ -47,11 +48,13 @@ struct Args {
     cmd_init: bool,
     cmd_list: bool,
     cmd_login: bool,
+    cmd_logs: bool,
     cmd_package: bool,
     cmd_publish: bool,
     cmd_sign: bool,
     cmd_up: bool,
     flag_appstore: bool,
+    flag_follow: bool,
     flag_github: bool,
     flag_nightly: bool,
     flag_package: bool,
@@ -111,6 +114,11 @@ fn main() {
             let token = args.arg_token.unwrap();
             config::krankerl::set_github_token(&token).expect("could not save github token");
         }
+    } else if args.cmd_logs {
+        let cwd = PathBuf::from(".");
+        krankerl::commands::logs(&cwd, args.flag_follow).unwrap_or_else(|e| {
+            println!("an error occured: {}", e);
+        });
     } else if args.cmd_package {
         package_app().unwrap_or_else(|e| println!("could not package app: {}", e));
     } else if args.cmd_publish {

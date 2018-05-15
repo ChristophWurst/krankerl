@@ -6,7 +6,7 @@ use indicatif::{MultiProgress, ProgressBar};
 use composer::Composer;
 use npm_scripts::NpmScripts;
 
-use console::default_spinner;
+use console_helper::default_spinner;
 
 fn npm_up(app_path: &PathBuf, pb: ProgressBar) -> Result<(), Error> {
     pb.enable_steady_tick(200);
