@@ -2,9 +2,11 @@ use std::path::PathBuf;
 use std::thread;
 
 use failure::Error;
-use indicatif::{MultiProgress, ProgressBar, ProgressStyle};
+use indicatif::{MultiProgress, ProgressBar};
 use composer::Composer;
 use npm_scripts::NpmScripts;
+
+use console::default_spinner;
 
 fn npm_up(app_path: &PathBuf, pb: ProgressBar) -> Result<(), Error> {
     pb.enable_steady_tick(200);
@@ -47,16 +49,11 @@ fn composer_up(app_path: &PathBuf, pb: ProgressBar) -> Result<(), Error> {
 
 pub fn up(app_path: &PathBuf) -> Result<(), Error> {
     let m = MultiProgress::new();
-    let sty = ProgressStyle::default_spinner()
-        .tick_chars("/|\\- ")
-        .template("{spinner:.dim.bold} {wide_msg}");
 
-    let pb = m.add(ProgressBar::new_spinner());
-    pb.set_style(sty.clone());
+    let pb = m.add(default_spinner());
     let p1 = app_path.to_owned();
     let t1 = thread::spawn(move || npm_up(&p1, pb));
-    let pb = m.add(ProgressBar::new_spinner());
-    pb.set_style(sty.clone());
+    let pb = m.add(default_spinner());
     let p2 = app_path.to_owned();
     let t2 = thread::spawn(move || composer_up(&p2, pb));
 
