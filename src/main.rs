@@ -18,6 +18,7 @@ const USAGE: &'static str = "
 Krankerl. A CLI helper to manage Nextcloud apps.
 
 Usage:
+  krankerl clean
   krankerl enable
   krankerl disable
   krankerl init
@@ -42,6 +43,7 @@ struct Args {
     arg_version: Option<String>,
     cmd_apps: bool,
     cmd_categories: bool,
+    cmd_clean: bool,
     cmd_enable: bool,
     cmd_disable: bool,
     cmd_init: bool,
@@ -103,6 +105,11 @@ fn main() {
         });
 
         core.run(work).unwrap();
+    } else if args.cmd_clean {
+        let cwd = PathBuf::from(".");
+        krankerl::commands::clean(&cwd).unwrap_or_else(|e| {
+            println!("an error occured: {}", e);
+        });
     } else if args.cmd_login {
         if args.flag_appstore {
             let token = args.arg_token.unwrap();
