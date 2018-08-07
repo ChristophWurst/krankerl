@@ -9,6 +9,7 @@ A CLI helper to manage [Nextcloud](https://nextcloud.com/) apps.
 
 ```
 Usage:
+  krankerl clean
   krankerl enable
   krankerl disable
   krankerl init
