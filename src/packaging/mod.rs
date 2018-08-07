@@ -3,8 +3,8 @@ use std::path::{Path, PathBuf};
 use std::thread;
 
 use failure::Error;
-use flate2::Compression;
 use flate2::write::GzEncoder;
+use flate2::Compression;
 use indicatif::{MultiProgress, ProgressBar};
 use nextcloud_appinfo::get_appinfo;
 use walkdir::{DirEntry, WalkDir};
@@ -14,10 +14,10 @@ mod artifacts;
 mod commands;
 mod exclude;
 
-use config;
-use console::default_spinner;
 use self::commands::PackageCommands;
+use config;
 use config::app::AppConfig;
+use console::default_spinner;
 
 fn build_file_list(build_path: &Path, excludes: &exclude::ExcludedFiles) -> Vec<DirEntry> {
     WalkDir::new(build_path)
@@ -56,10 +56,7 @@ fn package(
     let encoder = archive::build_app_archive(&base, &app_path, file_list, encoder)?;
     encoder.finish()?;
 
-    progress.finish_with_message(&format!(
-        "Packaged app as {:?}",
-        compressed_archive_path
-    ));
+    progress.finish_with_message(&format!("Packaged app as {:?}", compressed_archive_path));
     Ok(())
 }
 

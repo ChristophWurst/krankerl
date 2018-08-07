@@ -1,9 +1,9 @@
 use std::path::PathBuf;
 use std::thread;
 
+use composer::Composer;
 use failure::Error;
 use indicatif::{MultiProgress, ProgressBar};
-use composer::Composer;
 use npm_scripts::NpmScripts;
 
 use console::default_spinner;

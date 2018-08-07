@@ -3,8 +3,8 @@ use std::io;
 use std::path::Path;
 use std::process::{Command, Stdio};
 
-use failure::Error;
 use error;
+use failure::Error;
 
 pub fn clone_app(src: &Path, dst: &Path) -> Result<(), Error> {
     // TODO: use libgit2 instead
