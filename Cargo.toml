@@ -1,6 +1,6 @@
 [package]
 name = "krankerl"
-version = "0.8.0"
+version = "0.9.0"
 authors = ["Christoph Wurst <christoph@winzerhof-wurst.at>"]
 description = "A CLI helper to manage Nextcloud apps"
 license-file = "LICENSE"
