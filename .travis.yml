@@ -14,11 +14,8 @@ branches:
 
 cache: cargo
 
-before_install:
-  - export BUILD_VERSION=$(echo "${TRAVIS_BRANCH//v/}")
-  - echo "Building $BUILD_VERSION"
-
-before_deploy:
+before_deploy: 
+  - export BUILD_VERSION=$(echo "${TRAVIS_BRANCH//v/}")  
   - cargo install -f cargo-deb
   - cargo build --release
   - cargo deb
@@ -27,8 +24,8 @@ deploy:
   provider: releases
   api_key: $GITHUB_TOKEN
   file:
+    - target/debian/krankerl_${BUILD_VERSION}_amd64.deb 
     - target/release/krankerl
-    - target/debian/krankerl_$BUILD_VERSION_amd64.deb 
   skip_cleanup: true
   on:
     tags: true
