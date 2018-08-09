@@ -15,13 +15,22 @@ branches:
 cache: cargo
 
 before_deploy:
+  - cargo install -f cargo-deb
   - cargo build --release
+  - cargo deb
 
 deploy:
-  provider: releases
-  api_key: $GITHUB_TOKEN
-  file: target/release/krankerl
-  skip_cleanup: true
-  on:
-    tags: true
-    condition: $TRAVIS_RUST_VERSION == stable
+  - provider: releases
+    api_key: $GITHUB_TOKEN
+    file:  target/release/krankerl
+    skip_cleanup: true
+    on:
+      tags: true
+      condition: $TRAVIS_RUST_VERSION == stable
+  - provider: releases
+    api_key: $GITHUB_TOKEN
+    file: target/debian/krankerl_$TRAVIS_TAG_amd64.deb
+    skip_cleanup: true
+    on:
+      tags: true
+      condition: $TRAVIS_RUST_VERSION == stable
