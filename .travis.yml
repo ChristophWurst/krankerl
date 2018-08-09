@@ -24,17 +24,13 @@ before_deploy:
   - cargo deb
 
 deploy:
-  - provider: releases
-    api_key: $GITHUB_TOKEN
-    file:  target/release/krankerl
-    skip_cleanup: true
-    on:
-      tags: true
-      condition: $TRAVIS_RUST_VERSION == stable
-  - provider: releases
-    api_key: $GITHUB_TOKEN
-    file: target/debian/krankerl_$BUILD_VERSION_amd64.deb
-    skip_cleanup: true
-    on:
-      tags: true
-      condition: $TRAVIS_RUST_VERSION == stable
+  provider: releases
+  api_key: $GITHUB_TOKEN
+  file:
+    - target/release/krankerl
+    - target/debian/krankerl_$BUILD_VERSION_amd64.deb 
+  skip_cleanup: true
+  on:
+    tags: true
+    condition: $TRAVIS_RUST_VERSION == stable
+
