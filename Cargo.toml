@@ -32,7 +32,7 @@ tokio-core = "0.1"
 toml = "0.4.6"
 openssl = "0.10"
 pathdiff = "0.1.0"
-walkdir = "2.2.0"
+walkdir = "2.2.1"
 xdg = "2.1.0"
 
 [dev-dependencies]
