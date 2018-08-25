@@ -68,11 +68,11 @@ fn main() {
     let mut core = Core::new().unwrap();
 
     if args.cmd_enable {
-        enable_app().unwrap_or_else(|e| {
+        krankerl::commands::enable_app().unwrap_or_else(|e| {
             println!("an error occured: {}", e);
         });
     } else if args.cmd_disable {
-        disable_app().unwrap_or_else(|e| {
+        krankerl::commands::disable_app().unwrap_or_else(|e| {
             println!("an error occured: {}", e);
         });
     } else if args.cmd_init {

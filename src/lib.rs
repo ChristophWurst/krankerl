@@ -39,22 +39,7 @@ use std::path::{Path, PathBuf};
 use failure::Error;
 use nextcloud_appinfo::get_appinfo;
 pub use nextcloud_appstore::{get_apps_and_releases, get_categories};
-use occ::Occ;
 use tokio_core::reactor::Handle;
-
-pub fn enable_app() -> Result<(), Error> {
-    let app_path = Path::new(".").canonicalize()?;
-    let info = get_appinfo(&app_path)?;
-    let occ = Occ::new("../../occ");
-    occ.enable_app(info.id())
-}
-
-pub fn disable_app() -> Result<(), Error> {
-    let app_path = Path::new(".").canonicalize()?;
-    let info = get_appinfo(&app_path)?;
-    let occ = Occ::new("../../occ");
-    occ.disable_app(info.id())
-}
 
 fn get_home_dir() -> Result<PathBuf, Error> {
     env::home_dir().ok_or(format_err!("Could not resolve home dir",))
