@@ -124,7 +124,7 @@ fn main() {
         let url = args.arg_url.unwrap();
         let is_nightly = args.flag_nightly;
 
-        let signing = future::lazy(|| sign_package());
+        let signing = future::lazy(|| krankerl::commands::sign_package());
         let handle = core.handle();
 
         let work = signing
@@ -144,7 +144,7 @@ fn main() {
             println!("an error occured: {:?}", e);
         });
     } else if args.cmd_sign && args.flag_package {
-        let signature = sign_package();
+        let signature = krankerl::commands::sign_package();
         match signature {
             Ok(signature) => println!("Package signature: {}", signature),
             Err(err) => println!("an error occured: {}", err),
