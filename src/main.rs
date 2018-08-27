@@ -9,7 +9,6 @@ use std::path::{Path, PathBuf};
 
 use docopt::Docopt;
 use futures::{future, Future};
-use krankerl::config::app::init_config;
 use krankerl::packaging::package_app;
 use krankerl::*;
 use tokio_core::reactor::Core;
@@ -77,7 +76,7 @@ fn main() {
         });
     } else if args.cmd_init {
         let cwd = Path::new(".");
-        match init_config(&cwd) {
+        match krankerl::commands::init(&cwd) {
             Ok(_) => println!("krankerl.toml created."),
             Err(e) => println!("could not create krankerl.toml: {}", e),
         };
@@ -113,10 +112,10 @@ fn main() {
     } else if args.cmd_login {
         if args.flag_appstore {
             let token = args.arg_token.unwrap();
-            config::krankerl::set_appstore_token(&token).expect("could not save appstore token");
+            krankerl::commands::log_in_to_appstore(&token).expect("could not save appstore token");
         } else if args.flag_github {
             let token = args.arg_token.unwrap();
-            config::krankerl::set_github_token(&token).expect("could not save github token");
+            krankerl::commands::log_in_to_github(&token).expect("could not save appstore token");
         }
     } else if args.cmd_package {
         package_app().unwrap_or_else(|e| println!("could not package app: {}", e));
