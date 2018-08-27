@@ -115,7 +115,7 @@ fn main() {
             krankerl::commands::log_in_to_appstore(&token).expect("could not save appstore token");
         } else if args.flag_github {
             let token = args.arg_token.unwrap();
-            krankerl::commands::log_in_to_github(&token).expect("could not save appstore token");
+            krankerl::commands::log_in_to_github(&token).expect("could not save github token");
         }
     } else if args.cmd_package {
         package_app().unwrap_or_else(|e| println!("could not package app: {}", e));
