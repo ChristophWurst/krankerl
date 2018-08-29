@@ -1,6 +1,7 @@
 extern crate base64;
 #[macro_use]
 extern crate failure;
+extern crate chrono;
 extern crate composer;
 extern crate flate2;
 #[cfg(test)]
@@ -12,6 +13,7 @@ extern crate indicatif;
 extern crate nextcloud_appinfo;
 extern crate nextcloud_appsignature;
 extern crate nextcloud_appstore;
+extern crate nextcloud_changelog;
 extern crate npm_scripts;
 extern crate openssl;
 extern crate pathdiff;

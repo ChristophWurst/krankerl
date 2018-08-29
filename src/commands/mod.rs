@@ -1,3 +1,4 @@
+mod changelog;
 mod clean;
 mod enable;
 mod disable;
@@ -6,6 +7,7 @@ mod login;
 mod sign_package;
 mod up;
 
+pub use self::changelog::create_changelog;
 pub use self::clean::clean;
 pub use self::enable::enable_app;
 pub use self::disable::disable_app;

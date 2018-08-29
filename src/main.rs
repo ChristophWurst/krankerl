@@ -25,6 +25,7 @@ Usage:
   krankerl list categories
   krankerl login (--appstore | --github) <token>
   krankerl package
+  krankerl changelog <prevversion> <currversion>
   krankerl publish [--nightly] <url>
   krankerl sign --package
   krankerl up
@@ -40,8 +41,11 @@ struct Args {
     arg_token: Option<String>,
     arg_url: Option<String>,
     arg_version: Option<String>,
+    arg_prevversion: Option<String>,
+    arg_currversion: Option<String>,
     cmd_apps: bool,
     cmd_categories: bool,
+    cmd_changelog: bool,
     cmd_clean: bool,
     cmd_enable: bool,
     cmd_disable: bool,
@@ -119,6 +123,14 @@ fn main() {
         }
     } else if args.cmd_package {
         package_app().unwrap_or_else(|e| println!("could not package app: {}", e));
+    } else if args.cmd_changelog {
+        krankerl::commands::create_changelog(
+            ".",
+            args.arg_prevversion.expect("no prevversion found"),
+            args.arg_currversion.expect("no currversion found"),
+        ).unwrap_or_else(|e| {
+            println!("an error occured: {:?}", e);
+        })
     } else if args.cmd_publish {
         let url = args.arg_url.unwrap();
         let is_nightly = args.flag_nightly;
