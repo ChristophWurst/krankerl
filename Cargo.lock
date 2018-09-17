@@ -413,7 +413,6 @@ dependencies = [
  "nextcloud_appsignature 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "nextcloud_appstore 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "npm_scripts 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "openssl 0.10.12 (registry+https://github.com/rust-lang/crates.io-index)",
  "pathdiff 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.79 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_derive 1.0.79 (registry+https://github.com/rust-lang/crates.io-index)",

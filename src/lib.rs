@@ -13,7 +13,6 @@ extern crate nextcloud_appinfo;
 extern crate nextcloud_appsignature;
 extern crate nextcloud_appstore;
 extern crate npm_scripts;
-extern crate openssl;
 extern crate pathdiff;
 #[macro_use]
 extern crate serde_derive;
