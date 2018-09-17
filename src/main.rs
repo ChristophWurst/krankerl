@@ -83,7 +83,7 @@ fn main() {
     } else if args.cmd_list && args.cmd_apps {
         let version = &args.arg_version.unwrap();
 
-        let work = get_apps_and_releases(&core.handle(), &version.to_owned()).map(|apps| {
+        let work = get_apps_and_releases(&version.to_owned()).map(|apps| {
             println!("found {} apps for {}:", apps.len(), version);
             for app in apps {
                 if app.isFeatured {
@@ -96,7 +96,7 @@ fn main() {
 
         core.run(work).unwrap();
     } else if args.cmd_list && args.cmd_categories {
-        let work = get_categories(&core.handle()).map(|cats| {
+        let work = get_categories().map(|cats| {
             println!("found {} categories:", cats.len());
             for cat in cats {
                 println!("- {}", cat.id)
@@ -124,7 +124,6 @@ fn main() {
         let is_nightly = args.flag_nightly;
 
         let signing = future::lazy(|| krankerl::commands::sign_package());
-        let handle = core.handle();
 
         let work = signing
             .and_then(|signature| {
@@ -132,7 +131,7 @@ fn main() {
                 assert!(config.appstore_token.is_some());
                 let api_token = config.appstore_token.unwrap();
 
-                publish_app(&handle, &url, is_nightly, &signature, &api_token)
+                publish_app(&url, is_nightly, &signature, &api_token)
             })
             .and_then(|_| {
                 println!("app released successfully");

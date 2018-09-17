@@ -1,6 +1,6 @@
 [package]
 name = "krankerl"
-version = "0.9.3"
+version = "0.9.4"
 authors = ["Christoph Wurst <christoph@winzerhof-wurst.at>"]
 description = "A CLI helper to manage Nextcloud apps"
 license-file = "LICENSE"
@@ -21,8 +21,8 @@ hex = "0.3"
 indicatif = "0.9.0"
 globset = "0.4.2"
 nextcloud_appinfo = "0.3.0"
-nextcloud_appsignature = "0.2.0"
-nextcloud_appstore = "0.3.1"
+nextcloud_appsignature = "0.3.0"
+nextcloud_appstore = "0.4.0"
 npm_scripts = "0.1.2"
 serde = "1.0"
 serde_derive = "1.0"
