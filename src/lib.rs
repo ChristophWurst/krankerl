@@ -35,7 +35,6 @@ pub mod packaging;
 
 use failure::Error;
 pub use nextcloud_appstore::{get_apps_and_releases, get_categories};
-use tokio_core::reactor::Handle;
 
 pub fn publish_app(
     url: &String,
