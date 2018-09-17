@@ -3,15 +3,14 @@ extern crate futures;
 extern crate krankerl;
 #[macro_use]
 extern crate serde_derive;
-extern crate tokio_core;
+extern crate tokio;
 
 use std::path::{Path, PathBuf};
 
 use docopt::Docopt;
-use futures::{future, Future};
+use futures::Future;
 use krankerl::packaging::package_app;
 use krankerl::*;
-use tokio_core::reactor::Core;
 
 const USAGE: &'static str = "
 Krankerl. A CLI helper to manage Nextcloud apps.
@@ -64,8 +63,6 @@ fn main() {
         .and_then(|d| d.deserialize())
         .unwrap_or_else(|e| e.exit());
 
-    let mut core = Core::new().unwrap();
-
     if args.cmd_enable {
         krankerl::commands::enable_app().unwrap_or_else(|e| {
             println!("an error occured: {}", e);
@@ -81,29 +78,33 @@ fn main() {
             Err(e) => println!("could not create krankerl.toml: {}", e),
         };
     } else if args.cmd_list && args.cmd_apps {
-        let version = &args.arg_version.unwrap();
+        let version = args.arg_version.unwrap().to_owned();
 
-        let work = get_apps_and_releases(&version.to_owned()).map(|apps| {
-            println!("found {} apps for {}:", apps.len(), version);
-            for app in apps {
-                if app.isFeatured {
-                    println!("- {} (featured)", app.id);
-                } else {
-                    println!("- {}", app.id);
+        let work = get_apps_and_releases(&version)
+            .map(move |apps| {
+                println!("found {} apps for {}:", apps.len(), version);
+                for app in apps {
+                    if app.isFeatured {
+                        println!("- {} (featured)", app.id);
+                    } else {
+                        println!("- {}", app.id);
+                    }
                 }
-            }
-        });
+            })
+            .map_err(|err| eprintln!("Could not load apps: {}", err));
 
-        core.run(work).unwrap();
+        tokio::run(work);
     } else if args.cmd_list && args.cmd_categories {
-        let work = get_categories().map(|cats| {
-            println!("found {} categories:", cats.len());
-            for cat in cats {
-                println!("- {}", cat.id)
-            }
-        });
+        let work = get_categories()
+            .map(|cats| {
+                println!("found {} categories:", cats.len());
+                for cat in cats {
+                    println!("- {}", cat.id)
+                }
+            })
+            .map_err(|err| eprintln!("Could not load categories: {}", err));
 
-        core.run(work).unwrap();
+        tokio::run(work);
     } else if args.cmd_clean {
         let cwd = PathBuf::from(".");
         krankerl::commands::clean(&cwd).unwrap_or_else(|e| {
@@ -123,36 +124,42 @@ fn main() {
         let url = args.arg_url.unwrap();
         let is_nightly = args.flag_nightly;
 
-        let signing = future::lazy(|| krankerl::commands::sign_package());
-
-        let work = signing
-            .and_then(|signature| {
+        match krankerl::commands::sign_package() {
+            Ok(signature) => {
                 let config = config::krankerl::get_config().expect("could not load config");
                 assert!(config.appstore_token.is_some());
                 let api_token = config.appstore_token.unwrap();
 
-                publish_app(&url, is_nightly, &signature, &api_token)
-            })
-            .and_then(|_| {
-                println!("app released successfully");
-                Ok(())
-            });
+                let work =
+                    publish_app(&url, is_nightly, &signature, &api_token).then(|res| match res {
+                        Ok(_) => {
+                            println!("app released successfully");
+                            Ok(())
+                        }
+                        Err(e) => {
+                            eprintln!("an error occured: {:?}", e);
+                            Ok(())
+                        }
+                    });
 
-        core.run(work).unwrap_or_else(|e| {
-            println!("an error occured: {:?}", e);
-        });
+                tokio::run(work);
+            }
+            Err(err) => {
+                eprintln!("Could not sign package: {}", err);
+            }
+        }
     } else if args.cmd_sign && args.flag_package {
         let signature = krankerl::commands::sign_package();
         match signature {
             Ok(signature) => println!("Package signature: {}", signature),
-            Err(err) => println!("an error occured: {}", err),
+            Err(err) => eprintln!("an error occured: {}", err),
         }
     } else if args.cmd_up {
         let cwd = PathBuf::from(".");
         krankerl::commands::up(&cwd).unwrap_or_else(|e| {
-            println!("an error occured: {}", e);
+            eprintln!("an error occured: {}", e);
         });
     } else if args.flag_version {
-        println!(env!("CARGO_PKG_VERSION"));
+        eprintln!(env!("CARGO_PKG_VERSION"));
     }
 }

@@ -20,7 +20,6 @@ extern crate serde_json;
 extern crate tar;
 #[cfg(test)]
 extern crate tempdir;
-extern crate tokio_core;
 extern crate toml;
 extern crate walkdir;
 extern crate xdg;
@@ -40,7 +39,7 @@ pub fn publish_app(
     is_nightly: bool,
     signature: &String,
     api_token: &String,
-) -> Box<futures::Future<Item = (), Error = Error>> {
+) -> Box<futures::Future<Item = (), Error = Error> + Send> {
     Box::new(nextcloud_appstore::publish_app(
         url,
         is_nightly,
