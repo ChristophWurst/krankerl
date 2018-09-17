@@ -1,7 +1,7 @@
 extern crate base64;
+extern crate composer;
 #[macro_use]
 extern crate failure;
-extern crate composer;
 extern crate flate2;
 #[cfg(test)]
 extern crate fs_extra;
@@ -38,13 +38,15 @@ pub use nextcloud_appstore::{get_apps_and_releases, get_categories};
 use tokio_core::reactor::Handle;
 
 pub fn publish_app(
-    handle: &Handle,
     url: &String,
     is_nightly: bool,
     signature: &String,
     api_token: &String,
 ) -> Box<futures::Future<Item = (), Error = Error>> {
     Box::new(nextcloud_appstore::publish_app(
-        handle, url, is_nightly, signature, api_token,
+        url,
+        is_nightly,
+        signature,
+        api_token,
     ))
 }
