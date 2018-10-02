@@ -4,6 +4,11 @@ rust:
   - beta
   - nightly
 
+matrix:
+  include:
+  - os: osx
+    rust: stable
+
 branches:
   only:
   - staging
