@@ -11,7 +11,7 @@ categories = ["development-tools", "development-tools::build-utils"]
 travis-ci = { repository = "ChristophWurst/krankerl", branch = "master" }
 
 [dependencies]
-base64 = "0.9"
+base64 = "0.10"
 composer = "0.1"
 docopt = "1.0"
 failure = "0.1.3"
