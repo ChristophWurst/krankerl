@@ -41,9 +41,6 @@ pub fn publish_app(
     api_token: &String,
 ) -> Box<futures::Future<Item = (), Error = Error> + Send> {
     Box::new(nextcloud_appstore::publish_app(
-        url,
-        is_nightly,
-        signature,
-        api_token,
+        url, is_nightly, signature, api_token,
     ))
 }

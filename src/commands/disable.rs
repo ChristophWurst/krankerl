@@ -1,8 +1,8 @@
 use failure::Error;
 use nextcloud_appinfo::get_appinfo;
 
-use std::path::Path;
 use occ::Occ;
+use std::path::Path;
 
 pub fn disable_app() -> Result<(), Error> {
     let app_path = Path::new(".").canonicalize()?;
