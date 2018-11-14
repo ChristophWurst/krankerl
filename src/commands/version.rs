@@ -2,6 +2,7 @@ use std::fs::OpenOptions;
 use std::io::{prelude::*, SeekFrom};
 use std::path::Path;
 
+use failure::Error;
 use nextcloud_appinfo;
 
 pub enum VersionChange {
@@ -11,14 +12,14 @@ pub enum VersionChange {
 }
 
 impl std::str::FromStr for VersionChange {
-    type Err = ();
+    type Err = Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "major" => Ok(VersionChange::Major),
             "minor" => Ok(VersionChange::Minor),
             "patch" => Ok(VersionChange::Patch),
-            _ => Err(()),
+            _ => Err(format_err!("Could not parse version bump type")),
         }
     }
 }
@@ -27,7 +28,7 @@ fn version_string(v: &nextcloud_appinfo::Version) -> String {
     format!("{}.{}.{}", v.major, v.minor, v.patch)
 }
 
-pub fn bump_version(bump: &str) {
+pub fn bump_version(bump: &str) -> Result<(), Error> {
     let cwd = Path::new(".");
     let app_info = nextcloud_appinfo::get_appinfo(&cwd).expect("could not get app info");
     println!("current version is {}", app_info.version());
@@ -38,8 +39,7 @@ pub fn bump_version(bump: &str) {
         Ok(VersionChange::Minor) => version.increment_minor(),
         Ok(VersionChange::Patch) => version.increment_patch(),
         _ => {
-            eprintln!("invalid argument supplied. Use major, minor or patch.");
-            std::process::exit(2);
+            bail!("invalid argument supplied. Use major, minor or patch.")
         }
     };
 
@@ -63,4 +63,5 @@ pub fn bump_version(bump: &str) {
         .write_all(new_contents.as_bytes())
         .expect("could not write to info.xml");
     println!("next version is {}", version);
+    Ok(())
 }
