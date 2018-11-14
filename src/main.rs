@@ -170,7 +170,8 @@ fn main() {
             "patch"
         };
 
-        krankerl::commands::bump_version(bump).unwrap_or_else(|e| eprintln!("Could not bump version: {}", e))
+        krankerl::commands::bump_version(bump)
+            .unwrap_or_else(|e| eprintln!("Could not bump version: {}", e))
     } else if args.flag_version {
         eprintln!(env!("CARGO_PKG_VERSION"));
     }

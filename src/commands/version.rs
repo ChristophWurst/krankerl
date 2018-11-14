@@ -38,9 +38,7 @@ pub fn bump_version(bump: &str) -> Result<(), Error> {
         Ok(VersionChange::Major) => version.increment_major(),
         Ok(VersionChange::Minor) => version.increment_minor(),
         Ok(VersionChange::Patch) => version.increment_patch(),
-        _ => {
-            bail!("invalid argument supplied. Use major, minor or patch.")
-        }
+        _ => bail!("invalid argument supplied. Use major, minor or patch."),
     };
 
     let mut info_file = OpenOptions::new()
@@ -48,16 +46,13 @@ pub fn bump_version(bump: &str) -> Result<(), Error> {
         .write(true)
         .open("./appinfo/info.xml")?;
     let mut contents = String::new();
-    info_file
-        .read_to_string(&mut contents)?;
+    info_file.read_to_string(&mut contents)?;
     let new_contents = contents.replace(
         &version_string(app_info.version()),
         &version_string(&version),
     );
-    info_file
-        .seek(SeekFrom::Start(0))?;
-    info_file
-        .write_all(new_contents.as_bytes())?;
+    info_file.seek(SeekFrom::Start(0))?;
+    info_file.write_all(new_contents.as_bytes())?;
     println!("next version is {}", version);
     Ok(())
 }

@@ -44,7 +44,8 @@ impl Default for AppConfig {
 impl Into<AppConfig> for ParsedAppConfig {
     fn into(self) -> AppConfig {
         AppConfig {
-            package: self.package
+            package: self
+                .package
                 .map(|pc| pc.into())
                 .unwrap_or(PackageConfig::default()),
         }
