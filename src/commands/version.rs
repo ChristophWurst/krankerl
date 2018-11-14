@@ -30,7 +30,7 @@ fn version_string(v: &nextcloud_appinfo::Version) -> String {
 
 pub fn bump_version(bump: &str) -> Result<(), Error> {
     let cwd = Path::new(".");
-    let app_info = nextcloud_appinfo::get_appinfo(&cwd).expect("could not get app info");
+    let app_info = nextcloud_appinfo::get_appinfo(&cwd)?;
     println!("current version is {}", app_info.version());
     let mut version = app_info.version().clone();
 
@@ -46,22 +46,18 @@ pub fn bump_version(bump: &str) -> Result<(), Error> {
     let mut info_file = OpenOptions::new()
         .read(true)
         .write(true)
-        .open("./appinfo/info.xml")
-        .expect("could not open info.xml");
+        .open("./appinfo/info.xml")?;
     let mut contents = String::new();
     info_file
-        .read_to_string(&mut contents)
-        .expect("could not read info.xml");
+        .read_to_string(&mut contents)?;
     let new_contents = contents.replace(
         &version_string(app_info.version()),
         &version_string(&version),
     );
     info_file
-        .seek(SeekFrom::Start(0))
-        .expect("could not reset file write position");
+        .seek(SeekFrom::Start(0))?;
     info_file
-        .write_all(new_contents.as_bytes())
-        .expect("could not write to info.xml");
+        .write_all(new_contents.as_bytes())?;
     println!("next version is {}", version);
     Ok(())
 }
