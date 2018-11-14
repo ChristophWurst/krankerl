@@ -20,6 +20,7 @@ Usage:
   krankerl publish [--nightly] <url>
   krankerl sign --package
   krankerl up
+  krankerl version [major|minor|patch]
   krankerl --version
 
 Options:

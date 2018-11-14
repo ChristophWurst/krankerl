@@ -27,6 +27,7 @@ Usage:
   krankerl publish [--nightly] <url>
   krankerl sign --package
   krankerl up
+  krankerl version (major|minor|patch)
   krankerl --version
 
 Options:
@@ -51,6 +52,9 @@ struct Args {
     cmd_publish: bool,
     cmd_sign: bool,
     cmd_up: bool,
+    cmd_version: bool,
+    cmd_major: bool,
+    cmd_minor: bool,
     flag_appstore: bool,
     flag_github: bool,
     flag_nightly: bool,
@@ -90,8 +94,7 @@ fn main() {
                         println!("- {}", app.id);
                     }
                 }
-            })
-            .map_err(|err| eprintln!("Could not load apps: {}", err));
+            }).map_err(|err| eprintln!("Could not load apps: {}", err));
 
         tokio::run(work);
     } else if args.cmd_list && args.cmd_categories {
@@ -101,8 +104,7 @@ fn main() {
                 for cat in cats {
                     println!("- {}", cat.id)
                 }
-            })
-            .map_err(|err| eprintln!("Could not load categories: {}", err));
+            }).map_err(|err| eprintln!("Could not load categories: {}", err));
 
         tokio::run(work);
     } else if args.cmd_clean {
@@ -159,6 +161,16 @@ fn main() {
         krankerl::commands::up(&cwd).unwrap_or_else(|e| {
             eprintln!("an error occured: {}", e);
         });
+    } else if args.cmd_version {
+        let bump = if args.cmd_major {
+            "major"
+        } else if args.cmd_minor {
+            "minor"
+        } else {
+            "patch"
+        };
+
+        krankerl::commands::bump_version(bump);
     } else if args.flag_version {
         eprintln!(env!("CARGO_PKG_VERSION"));
     }
