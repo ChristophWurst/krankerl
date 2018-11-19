@@ -8,6 +8,7 @@ extern crate fs_extra;
 extern crate futures;
 extern crate globset;
 extern crate hex;
+extern crate git2;
 extern crate indicatif;
 extern crate nextcloud_appinfo;
 extern crate nextcloud_appsignature;
