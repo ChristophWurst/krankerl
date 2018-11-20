@@ -16,7 +16,7 @@ name = "arrayvec"
 version = "0.4.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "nodrop 0.1.12 (registry+https://github.com/rust-lang/crates.io-index)",
+ "nodrop 0.1.13 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -737,7 +737,7 @@ dependencies = [
 
 [[package]]
 name = "nodrop"
-version = "0.1.12"
+version = "0.1.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
@@ -1594,7 +1594,7 @@ dependencies = [
 "checksum nextcloud_appinfo 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "02b80b4d1e4191b5e13131b8dc11e4c459373795575161315d624ff5f4b62493"
 "checksum nextcloud_appsignature 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)" = "31bdcdaae6bb8b925e27716514ef8918e9bbb6662d2724b7f36f6cbc52bb89df"
 "checksum nextcloud_appstore 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "8d9cb698bab979f861eae51ec84f00f771d253abca36b08f01ae6664372c5cc2"
-"checksum nodrop 0.1.12 (registry+https://github.com/rust-lang/crates.io-index)" = "9a2228dca57108069a5262f2ed8bd2e82496d2e074a06d1ccc7ce1687b6ae0a2"
+"checksum nodrop 0.1.13 (registry+https://github.com/rust-lang/crates.io-index)" = "2f9667ddcc6cc8a43afc9b7917599d7216aa09c463919ea32c59ed6cac8bc945"
 "checksum npm_scripts 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)" = "193801398bea96d30bfdf4bcc9e72e6c4e1b3dc877c6c68f101029c46c1b5131"
 "checksum num_cpus 1.8.0 (registry+https://github.com/rust-lang/crates.io-index)" = "c51a3322e4bca9d212ad9a158a02abc6934d005490c054a2778df73a70aa0a30"
 "checksum openssl 0.10.15 (registry+https://github.com/rust-lang/crates.io-index)" = "5e1309181cdcbdb51bc3b6bedb33dfac2a83b3d585033d3f6d9e22e8c1928613"
