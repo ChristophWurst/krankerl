@@ -6,15 +6,19 @@ extern crate flate2;
 #[cfg(test)]
 extern crate fs_extra;
 extern crate futures;
+extern crate git2;
 extern crate globset;
 extern crate hex;
-extern crate git2;
+extern crate hubcaps;
 extern crate indicatif;
+#[macro_use]
+extern crate lazy_static;
 extern crate nextcloud_appinfo;
 extern crate nextcloud_appsignature;
 extern crate nextcloud_appstore;
 extern crate npm_scripts;
 extern crate pathdiff;
+extern crate regex;
 #[macro_use]
 extern crate serde_derive;
 extern crate serde_json;
@@ -42,6 +46,9 @@ pub fn publish_app(
     api_token: &String,
 ) -> Box<futures::Future<Item = (), Error = Error> + Send> {
     Box::new(nextcloud_appstore::publish_app(
-        url, is_nightly, signature, api_token,
+        url,
+        is_nightly,
+        signature,
+        api_token,
     ))
 }
