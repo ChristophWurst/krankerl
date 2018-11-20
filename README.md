@@ -18,6 +18,7 @@ Usage:
   krankerl login (--appstore | --github) <token>
   krankerl package
   krankerl publish [--nightly] <url>
+  krankerl release
   krankerl sign --package
   krankerl up
   krankerl version [major|minor|patch]

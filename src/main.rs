@@ -25,6 +25,7 @@ Usage:
   krankerl login (--appstore | --github) <token>
   krankerl package
   krankerl publish [--nightly] <url>
+  krankerl release
   krankerl sign --package
   krankerl up
   krankerl version (major|minor|patch)
@@ -50,6 +51,7 @@ struct Args {
     cmd_login: bool,
     cmd_package: bool,
     cmd_publish: bool,
+    cmd_release: bool,
     cmd_sign: bool,
     cmd_up: bool,
     cmd_version: bool,
@@ -150,6 +152,11 @@ fn main() {
                 eprintln!("Could not sign package: {}", err);
             }
         }
+    } else if args.cmd_release {
+        let cwd = PathBuf::from(".");
+        krankerl::commands::release(&cwd).unwrap_or_else(|e| {
+            eprintln!("an error occured: {}", e);
+        });
     } else if args.cmd_sign && args.flag_package {
         let signature = krankerl::commands::sign_package();
         match signature {
