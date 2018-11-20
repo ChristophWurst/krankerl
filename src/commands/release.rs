@@ -31,12 +31,13 @@ fn git_tag(app_path: &PathBuf, pb: ProgressBar) -> Result<String, Error> {
 
     pb.finish_with_message(&format!("tagged current master as {}", tag_name));
 
-    Ok(version_str)
+    Ok(tag_name)
 }
 
 /// TODO: iterate remotes and filter github ones, then take first
 fn git_push(app_path: &PathBuf, version_str: &String, pb: ProgressBar) -> Result<(), Error> {
     let repo = Repository::open(app_path)?;
+    let repo_config = repo.config()?;
     let origin = repo.find_remote("origin");
     if let Err(e) = origin {
         bail!("could not find a remote named origin");
@@ -46,22 +47,33 @@ fn git_push(app_path: &PathBuf, version_str: &String, pb: ProgressBar) -> Result
     // TODO: Note that you'll likely want to use RemoteCallbacks and set push_update_reference
     //       to test whether all the references were pushed successfully.
     let mut callbacks = git2::RemoteCallbacks::new();
-    callbacks.credentials(|url, username, allowed| {
-        println!("{}, {:?}", url, username);
-
-        let username = username.unwrap_or("git");
-
-        if allowed.contains(git2::CredentialType::USERNAME) {
+    let mut cred_helper = git2::CredentialHelper::new("foo");
+    cred_helper.config(&repo_config);
+    callbacks.credentials(move |url, username, allowed| {
+        if allowed.contains(git2::CredentialType::SSH_KEY) {
+            let user = username
+                .map(|s| s.to_string())
+                .or_else(|| cred_helper.username.clone())
+                .unwrap_or("git".to_string());
+            git2::Cred::ssh_key_from_agent(&user)
+        } else if allowed.contains(git2::CredentialType::USERNAME) {
+            let username = username.unwrap_or("git");
             git2::Cred::username(username)
         } else {
-            Err(git2::Error::from_str("unable to find an appropriate authentication method"))
+            Err(git2::Error::from_str(
+                "unable to find an appropriate authentication method",
+            ))
         }
     });
     let mut opts = PushOptions::new();
     opts.remote_callbacks(callbacks);
-    
 
-    origin.push(vec![version_str.as_str()].as_slice(), Some(&mut opts))?;
+    origin.push(
+        vec![format!("refs/tags/{}", version_str).as_str()].as_slice(),
+        Some(&mut opts),
+    )?;
+
+    pb.finish_with_message(&format!("pushed tag {} to origin", version_str));
 
     Ok(())
 }
