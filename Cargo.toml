@@ -14,7 +14,7 @@ travis-ci = { repository = "ChristophWurst/krankerl", branch = "master" }
 base64 = "0.10"
 composer = "0.1"
 docopt = "1.0"
-failure = "0.1.3"
+failure = "0.1.5"
 flate2 = "1.0"
 futures = "0.1"
 hex = "0.3"
