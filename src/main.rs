@@ -129,7 +129,11 @@ fn main() {
         match krankerl::commands::sign_package() {
             Ok(signature) => {
                 let config = config::krankerl::get_config().expect("could not load config");
-                assert!(config.appstore_token.is_some());
+
+                if !config.appstore_token.is_some() {
+                    println!("No appstore token set, run: krankerl login --appstore <token>");
+                    return;
+                }
                 let api_token = config.appstore_token.unwrap();
 
                 let work =
