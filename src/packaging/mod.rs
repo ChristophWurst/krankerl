@@ -76,26 +76,26 @@ fn run_package_commands(
 }
 
 fn package_app_thread(
+    app_path: PathBuf,
     prog_clone: ProgressBar,
     prog_config: ProgressBar,
     prog_package_cmds: ProgressBar,
     prog_package: ProgressBar,
 ) -> Result<(), Error> {
-    let cwd = Path::new(".");
-    let mut artifacts_path = PathBuf::from(cwd);
+    let mut artifacts_path = PathBuf::from(&app_path);
     artifacts_path.push("build");
     artifacts_path.push("artifacts");
 
-    ensure_config_exists(&cwd)?;
+    ensure_config_exists(&app_path)?;
 
-    let app_info = get_appinfo(&cwd)?;
+    let app_info = get_appinfo(&app_path)?;
     let app_id = app_info.id();
 
     let package_path = artifacts_path.clone();
     artifacts::clear(&artifacts_path)?;
     artifacts_path.push(&app_id);
     prog_clone.set_message("Cloning app to build directory...");
-    artifacts::clone_app(&cwd, &artifacts_path)?;
+    artifacts::clone_app(&app_path, &artifacts_path)?;
     prog_clone.finish_with_message("App cloned to build directory.");
 
     prog_config.set_message("Reading config...");
@@ -122,7 +122,8 @@ fn package_app_thread(
     Ok(())
 }
 
-pub fn package_app() -> Result<(), Error> {
+pub fn package_app(app_path: &PathBuf) -> Result<(), Error> {
+    let app_path = app_path.clone();
     let mp = MultiProgress::new();
     let prog_clone = mp.add(default_spinner());
     prog_clone.enable_steady_tick(200);
@@ -138,7 +139,7 @@ pub fn package_app() -> Result<(), Error> {
     prog_package.set_message("waiting...");
 
     let worker = thread::spawn(move || {
-        package_app_thread(prog_clone, prog_config, prog_package_cmds, prog_package)
+        package_app_thread(app_path, prog_clone, prog_config, prog_package_cmds, prog_package)
     });
 
     mp.join()?;

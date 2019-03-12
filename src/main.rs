@@ -9,7 +9,6 @@ use std::path::{Path, PathBuf};
 
 use docopt::Docopt;
 use futures::Future;
-use krankerl::packaging::package_app;
 use krankerl::*;
 
 const USAGE: &'static str = "
@@ -121,7 +120,7 @@ fn main() {
             krankerl::commands::log_in_to_github(&token).expect("could not save github token");
         }
     } else if args.cmd_package {
-        package_app().unwrap_or_else(|e| println!("could not package app: {}", e));
+        krankerl::commands::package_app(&PathBuf::from(".")).unwrap_or_else(|e| println!("could not package app: {}", e));
     } else if args.cmd_publish {
         let url = args.arg_url.unwrap();
         let is_nightly = args.flag_nightly;
