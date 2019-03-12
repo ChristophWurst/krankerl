@@ -52,14 +52,10 @@ mod tests {
 
         let excludes = ExcludedFiles::new(&rules).unwrap();
 
-        assert!(!excludes.is_excluded(
-            &Path::new("build/artefacts/app/js/build/build.js"),
-            &Path::new("build/artefacts/app")
-        ));
-        assert!(excludes.is_excluded(
-            &Path::new("build/artefacts/app/js/init.js"),
-            &Path::new("build/artefacts/app")
-        ));
+        assert!(!excludes.is_excluded(&Path::new("build/artefacts/app/js/build/build.js"),
+                                      &Path::new("build/artefacts/app")));
+        assert!(excludes.is_excluded(&Path::new("build/artefacts/app/js/init.js"),
+                                     &Path::new("build/artefacts/app")));
     }
 
 }

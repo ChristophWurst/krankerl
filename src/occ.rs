@@ -9,8 +9,7 @@ pub struct Occ<P> {
 }
 
 impl<P> Occ<P>
-where
-    P: convert::AsRef<ffi::OsStr>,
+    where P: convert::AsRef<ffi::OsStr>
 {
     pub fn new(occ_path: P) -> Self {
         Occ { path: occ_path }
