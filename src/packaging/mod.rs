@@ -27,12 +27,11 @@ fn build_file_list(build_path: &Path, excludes: &exclude::ExcludedFiles) -> Vec<
         .collect()
 }
 
-fn package(
-    artifacts_path: &Path,
-    app_id: &String,
-    app_config: &AppConfig,
-    progress: ProgressBar,
-) -> Result<(), Error> {
+fn package(artifacts_path: &Path,
+           app_id: &String,
+           app_config: &AppConfig,
+           progress: ProgressBar)
+           -> Result<(), Error> {
     progress.set_message("Packaging app files into an archive...");
     let excludes = exclude::ExcludedFiles::new(app_config.package().exclude())?;
 
@@ -40,10 +39,8 @@ fn package(
     let mut compressed_archive_filename = app_id.clone();
     compressed_archive_filename.push_str(".tar.gz");
     compressed_archive_path.push(compressed_archive_filename);
-    progress.set_message(&format!(
-        "Writing compressed app archive to {:?}...",
-        compressed_archive_path
-    ));
+    progress.set_message(&format!("Writing compressed app archive to {:?}...",
+                                  compressed_archive_path));
 
     let gz_archive_file = File::create(&compressed_archive_path)?;
     let encoder = GzEncoder::new(gz_archive_file, Compression::default());
@@ -67,21 +64,19 @@ fn ensure_config_exists(app_path: &Path) -> Result<(), Error> {
     }
 }
 
-fn run_package_commands(
-    app_path: &Path,
-    cmds: commands::CommandList,
-    prog: ProgressBar,
-) -> Result<(), Error> {
+fn run_package_commands(app_path: &Path,
+                        cmds: commands::CommandList,
+                        prog: ProgressBar)
+                        -> Result<(), Error> {
     cmds.execute(app_path, prog)
 }
 
-fn package_app_thread(
-    app_path: PathBuf,
-    prog_clone: ProgressBar,
-    prog_config: ProgressBar,
-    prog_package_cmds: ProgressBar,
-    prog_package: ProgressBar,
-) -> Result<(), Error> {
+fn package_app_thread(app_path: PathBuf,
+                      prog_clone: ProgressBar,
+                      prog_config: ProgressBar,
+                      prog_package_cmds: ProgressBar,
+                      prog_package: ProgressBar)
+                      -> Result<(), Error> {
     let mut artifacts_path = PathBuf::from(&app_path);
     artifacts_path.push("build");
     artifacts_path.push("artifacts");
@@ -99,24 +94,23 @@ fn package_app_thread(
     prog_clone.finish_with_message("App cloned to build directory.");
 
     prog_config.set_message("Reading config...");
-    let app_config = config::app::get_config(&artifacts_path).map(|config| match config {
-        Some(cfg) => {
+    let app_config = config::app::get_config(&artifacts_path)
+        .map(|config| match config {
+                 Some(cfg) => {
             prog_config.finish_with_message("Found krankerl.toml config file.");
             cfg
         }
-        None => {
+                 None => {
             prog_config.finish_with_message(
                 "Warning: No krankerl.toml found. A default configuration is used.",
             );
             AppConfig::default()
         }
-    })?;
+             })?;
 
-    run_package_commands(
-        &artifacts_path,
-        app_config.package().into(),
-        prog_package_cmds,
-    )?;
+    run_package_commands(&artifacts_path,
+                         app_config.package().into(),
+                         prog_package_cmds)?;
 
     package(package_path.as_path(), &app_id, &app_config, prog_package)?;
     Ok(())
@@ -139,8 +133,12 @@ pub fn package_app(app_path: &PathBuf) -> Result<(), Error> {
     prog_package.set_message("waiting...");
 
     let worker = thread::spawn(move || {
-        package_app_thread(app_path, prog_clone, prog_config, prog_package_cmds, prog_package)
-    });
+                                   package_app_thread(app_path,
+                                                      prog_clone,
+                                                      prog_config,
+                                                      prog_package_cmds,
+                                                      prog_package)
+                               });
 
     mp.join()?;
     worker.join().unwrap()?;

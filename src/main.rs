@@ -68,12 +68,12 @@ fn main() {
 
     if args.cmd_enable {
         krankerl::commands::enable_app().unwrap_or_else(|e| {
-            println!("an error occured: {}", e);
-        });
+                                                            println!("an error occured: {}", e);
+                                                        });
     } else if args.cmd_disable {
         krankerl::commands::disable_app().unwrap_or_else(|e| {
-            println!("an error occured: {}", e);
-        });
+                                                             println!("an error occured: {}", e);
+                                                         });
     } else if args.cmd_init {
         let cwd = Path::new(".");
         match krankerl::commands::init(&cwd) {
@@ -93,24 +93,26 @@ fn main() {
                         println!("- {}", app.id);
                     }
                 }
-            }).map_err(|err| eprintln!("Could not load apps: {}", err));
+            })
+            .map_err(|err| eprintln!("Could not load apps: {}", err));
 
         tokio::run(work);
     } else if args.cmd_list && args.cmd_categories {
         let work = get_categories()
             .map(|cats| {
-                println!("found {} categories:", cats.len());
-                for cat in cats {
-                    println!("- {}", cat.id)
-                }
-            }).map_err(|err| eprintln!("Could not load categories: {}", err));
+                     println!("found {} categories:", cats.len());
+                     for cat in cats {
+                         println!("- {}", cat.id)
+                     }
+                 })
+            .map_err(|err| eprintln!("Could not load categories: {}", err));
 
         tokio::run(work);
     } else if args.cmd_clean {
         let cwd = PathBuf::from(".");
         krankerl::commands::clean(&cwd).unwrap_or_else(|e| {
-            println!("an error occured: {}", e);
-        });
+                                                           println!("an error occured: {}", e);
+                                                       });
     } else if args.cmd_login {
         if args.flag_appstore {
             let token = args.arg_token.unwrap();
@@ -120,7 +122,8 @@ fn main() {
             krankerl::commands::log_in_to_github(&token).expect("could not save github token");
         }
     } else if args.cmd_package {
-        krankerl::commands::package_app(&PathBuf::from(".")).unwrap_or_else(|e| println!("could not package app: {}", e));
+        krankerl::commands::package_app(&PathBuf::from("."))
+            .unwrap_or_else(|e| println!("could not package app: {}", e));
     } else if args.cmd_publish {
         let url = args.arg_url.unwrap();
         let is_nightly = args.flag_nightly;
@@ -137,15 +140,15 @@ fn main() {
 
                 let work =
                     publish_app(&url, is_nightly, &signature, &api_token).then(|res| match res {
-                        Ok(_) => {
-                            println!("app released successfully");
-                            Ok(())
-                        }
-                        Err(e) => {
-                            eprintln!("an error occured: {:?}", e);
-                            Ok(())
-                        }
-                    });
+                                                                                   Ok(_) => {
+                        println!("app released successfully");
+                        Ok(())
+                    }
+                                                                                   Err(e) => {
+                        eprintln!("an error occured: {:?}", e);
+                        Ok(())
+                    }
+                                                                               });
 
                 tokio::run(work);
             }
@@ -162,8 +165,8 @@ fn main() {
     } else if args.cmd_up {
         let cwd = PathBuf::from(".");
         krankerl::commands::up(&cwd).unwrap_or_else(|e| {
-            eprintln!("an error occured: {}", e);
-        });
+                                                        eprintln!("an error occured: {}", e);
+                                                    });
     } else if args.cmd_version {
         let bump = if args.cmd_major {
             "major"

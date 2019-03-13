@@ -1,5 +1,6 @@
 use std::fs::OpenOptions;
-use std::io::{prelude::*, SeekFrom};
+use std::io::prelude::*;
+use std::io::SeekFrom;
 use std::path::Path;
 
 use failure::Error;
@@ -47,10 +48,8 @@ pub fn bump_version(bump: &str) -> Result<(), Error> {
         .open("./appinfo/info.xml")?;
     let mut contents = String::new();
     info_file.read_to_string(&mut contents)?;
-    let new_contents = contents.replace(
-        &version_string(app_info.version()),
-        &version_string(&version),
-    );
+    let new_contents = contents.replace(&version_string(app_info.version()),
+                                        &version_string(&version));
     info_file.seek(SeekFrom::Start(0))?;
     info_file.write_all(new_contents.as_bytes())?;
     println!("next version is {}", version);

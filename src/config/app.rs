@@ -35,17 +35,14 @@ impl AppConfig {
 
 impl Default for AppConfig {
     fn default() -> Self {
-        AppConfig {
-            package: PackageConfig::default(),
-        }
+        AppConfig { package: PackageConfig::default() }
     }
 }
 
 impl Into<AppConfig> for ParsedAppConfig {
     fn into(self) -> AppConfig {
         AppConfig {
-            package: self
-                .package
+            package: self.package
                 .map(|pc| pc.into())
                 .unwrap_or(PackageConfig::default()),
         }
@@ -80,12 +77,10 @@ impl Default for PackageConfig {
     fn default() -> Self {
         PackageConfig {
             before_cmds: vec![],
-            exclude: vec![
-                ".git".to_owned(),
-                ".gitignore".to_owned(),
-                "build".to_owned(),
-                "tests".to_owned(),
-            ],
+            exclude: vec![".git".to_owned(),
+                          ".gitignore".to_owned(),
+                          "build".to_owned(),
+                          "tests".to_owned()],
         }
     }
 }
@@ -95,15 +90,13 @@ pub fn init_config(app_path: &Path) -> Result<(), Error> {
     path_buf.push("krankerl.toml");
 
     if let Ok(_) = File::open(&path_buf) {
-        bail!(error::KrankerlError::Other {
-            cause: "krankerl.toml already exists.".to_string()
-        });
+        bail!(error::KrankerlError::Other { cause: "krankerl.toml already exists.".to_string() });
     }
 
     let mut config_file = File::create(&path_buf)?;
 
-    config_file.write_all(
-        r#"[package]
+    config_file
+        .write_all(r#"[package]
 exclude = [
 
 ]
@@ -111,15 +104,14 @@ exclude = [
 before_cmds = [
 
 ]
-"#.as_bytes(),
-    )?;
+"#
+                           .as_bytes())?;
 
     Ok(())
 }
 
 fn load_config<R>(reader: &R) -> Result<String, Error>
-where
-    R: ConfigReader,
+    where R: ConfigReader
 {
     let as_string = reader.read()?;
 
@@ -127,8 +119,10 @@ where
 }
 
 fn parse_config(config: String) -> Result<ParsedAppConfig, Error> {
-    toml::from_str(&config)
-        .map_err(|e| format_err!("could not parse krankerl.toml: {}", e.description()))
+    toml::from_str(&config).map_err(|e| {
+                                        format_err!("could not parse krankerl.toml: {}",
+                                                    e.description())
+                                    })
 }
 
 pub fn get_config(path: &Path) -> Result<Option<AppConfig>, Error> {
