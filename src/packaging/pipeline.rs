@@ -1,4 +1,4 @@
-use std::fs::File;
+use std::fs::{copy, create_dir_all, File};
 use std::path::{Path, PathBuf};
 
 use failure::Error;
@@ -6,6 +6,7 @@ use flate2::write::GzEncoder;
 use flate2::Compression;
 use indicatif::ProgressBar;
 use nextcloud_appinfo::{get_appinfo, AppInfo};
+use pathdiff::diff_paths;
 use tempdir::TempDir;
 use walkdir::{DirEntry, WalkDir};
 
@@ -170,6 +171,40 @@ impl BuiltApp {
 
         Ok(AppArchive::new(self))
     }
+
+    pub fn into_shipped(self, progress: Option<ProgressBar>) -> Result<ShippedApp, Error> {
+        let mut ship_path = self.app.source_path.to_path_buf();
+        ship_path.push("build");
+        ship_path.push("artifacts");
+        artifacts::clear(&ship_path)?;
+        ship_path.push(self.app_info.id());
+        progress
+            .as_ref()
+            .map(|prog| prog.set_message(&format!("Writing app files to {:?}...", ship_path)));
+
+        let app_path = tmp_app_path(self.tmp_dir.path(), self.app_info.id());
+        {
+            let excludes = exclude::ExcludedFiles::new(self.config.package().exclude())?;
+            for entry in build_file_list(&app_path, &excludes) {
+                if !entry.metadata().unwrap().is_dir() {
+                    let entry_path = entry.path();
+                    if let Some(normalized) = diff_paths(&entry_path, &app_path) {
+                        let mut file_path = ship_path.clone();
+                        file_path.push(&normalized);
+                        if let Some(parent) = file_path.parent() {
+                            create_dir_all(parent)?;
+                        }
+                        copy(&entry.path(), &file_path)?;
+                    }
+                }
+            }
+        }
+
+        progress.as_ref().map(|prog| {
+            prog.finish_with_message(&format!("App directory created at {:?}", ship_path))
+        });
+        Ok(ShippedApp::new(self))
+    }
 }
 
 fn build_file_list(build_path: &Path, excludes: &exclude::ExcludedFiles) -> Vec<DirEntry> {
@@ -185,6 +220,14 @@ pub struct AppArchive {}
 impl AppArchive {
     pub fn new(_app: BuiltApp) -> Self {
         AppArchive {}
+    }
+}
+
+pub struct ShippedApp {}
+
+impl ShippedApp {
+    pub fn new(_app: BuiltApp) -> Self {
+        ShippedApp {}
     }
 }
 
@@ -278,6 +321,30 @@ mod tests {
         assert!(final_path.exists(), "artifacts directory does not exist");
         final_path.push(format!("{}.tar.gz", APP_ID));
         assert!(final_path.exists(), "app archive does not exist");
+    }
+
+    #[test]
+    fn create_shipped_app_directory() {
+        let dir = create_test_app_dir(MINIMALIST_APP);
+        let app = App::new(get_test_app_path(dir.path()));
+        let clone = app.clone(None).unwrap();
+        let installed = clone.install_dependencies(None).unwrap();
+        let built = installed.build(None).unwrap();
+
+        built.into_shipped(None).unwrap();
+
+        let mut app_info_path = dir.path().to_path_buf();
+        app_info_path.push(APP_ID);
+        app_info_path.push("appinfo");
+        app_info_path.push("info.xml");
+        assert!(app_info_path.exists(), "info.xml is missing");
+        let mut package_json_path = dir.path().to_path_buf();
+        package_json_path.push(APP_ID);
+        package_json_path.push("package.json");
+        assert!(
+            !package_json_path.exists(),
+            "package.json should not be copied"
+        );
     }
 
 }

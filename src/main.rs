@@ -22,7 +22,7 @@ Usage:
   krankerl list apps <version>
   krankerl list categories
   krankerl login (--appstore | --github) <token>
-  krankerl package
+  krankerl package [--shipped]
   krankerl publish [--nightly] <url>
   krankerl sign --package
   krankerl up
@@ -58,6 +58,7 @@ struct Args {
     flag_github: bool,
     flag_nightly: bool,
     flag_package: bool,
+    flag_shipped: bool,
     flag_version: bool,
 }
 
@@ -122,7 +123,7 @@ fn main() {
             krankerl::commands::log_in_to_github(&token).expect("could not save github token");
         }
     } else if args.cmd_package {
-        krankerl::commands::package_app(&PathBuf::from("."))
+        krankerl::commands::package_app(&PathBuf::from("."), args.flag_shipped)
             .unwrap_or_else(|e| println!("could not package app: {}", e));
     } else if args.cmd_publish {
         let url = args.arg_url.unwrap();

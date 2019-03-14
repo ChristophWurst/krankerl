@@ -4,6 +4,6 @@ use failure::Error;
 
 use packaging::package_app as package;
 
-pub fn package_app(app_path: &PathBuf) -> Result<(), Error> {
-    package(app_path)
+pub fn package_app(app_path: &PathBuf, shipped: bool) -> Result<(), Error> {
+    package(app_path, shipped)
 }
