@@ -19,7 +19,6 @@ extern crate pathdiff;
 extern crate serde_derive;
 extern crate serde_json;
 extern crate tar;
-#[cfg(test)]
 extern crate tempdir;
 extern crate toml;
 extern crate walkdir;
