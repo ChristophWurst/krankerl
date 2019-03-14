@@ -16,7 +16,7 @@ Usage:
   krankerl list apps <version>
   krankerl list categories
   krankerl login (--appstore | --github) <token>
-  krankerl package
+  krankerl package [--shipped]
   krankerl publish [--nightly] <url>
   krankerl sign --package
   krankerl up

@@ -2,7 +2,7 @@ use std::path::PathBuf;
 use std::thread;
 
 use failure::Error;
-use indicatif::MultiProgress;
+use indicatif::{MultiProgress, ProgressBar};
 
 mod archive;
 mod artifacts;
@@ -11,8 +11,39 @@ mod exclude;
 mod pipeline;
 
 use console::default_spinner;
+use packaging::pipeline::App;
 
-pub fn package_app(app_path: &PathBuf) -> Result<(), Error> {
+fn build_archive(
+    app_path: PathBuf,
+    prog_clone: ProgressBar,
+    prog_dependencies: ProgressBar,
+    prog_build: ProgressBar,
+    prog_package: ProgressBar,
+) -> Result<(), Error> {
+    App::new(app_path)
+        .clone(Some(prog_clone))?
+        .install_dependencies(Some(prog_dependencies))?
+        .build(Some(prog_build))?
+        .into_archive(Some(prog_package))?;
+    Ok(())
+}
+
+fn build_shipped(
+    app_path: PathBuf,
+    prog_clone: ProgressBar,
+    prog_dependencies: ProgressBar,
+    prog_build: ProgressBar,
+    prog_package: ProgressBar,
+) -> Result<(), Error> {
+    App::new(app_path)
+        .clone(Some(prog_clone))?
+        .install_dependencies(Some(prog_dependencies))?
+        .build(Some(prog_build))?
+        .into_shipped(Some(prog_package))?;
+    Ok(())
+}
+
+pub fn package_app(app_path: &PathBuf, shipped: bool) -> Result<(), Error> {
     let app_path = app_path.clone();
     let mp = MultiProgress::new();
     let prog_clone = mp.add(default_spinner());
@@ -29,13 +60,23 @@ pub fn package_app(app_path: &PathBuf) -> Result<(), Error> {
     prog_package.set_message("waiting...");
 
     let worker = thread::spawn(move || {
-        use self::pipeline::App;
-
-        App::new(app_path)
-            .clone(Some(prog_clone))?
-            .install_dependencies(Some(prog_dependencies))?
-            .build(Some(prog_package_cmds))?
-            .into_archive(Some(prog_package))
+        if shipped {
+            build_shipped(
+                app_path,
+                prog_clone,
+                prog_dependencies,
+                prog_package_cmds,
+                prog_package,
+            )
+        } else {
+            build_archive(
+                app_path,
+                prog_clone,
+                prog_dependencies,
+                prog_package_cmds,
+                prog_package,
+            )
+        }
     });
 
     mp.join()?;
