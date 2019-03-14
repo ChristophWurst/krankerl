@@ -6,7 +6,7 @@ use std::vec::Vec;
 use failure::Error;
 use pathdiff::diff_paths;
 use tar::Builder;
-use walkdir::DirEntry;
+use ignore::DirEntry;
 
 pub fn build_app_archive<W>(root: &Path,
                             app_path: &Path,

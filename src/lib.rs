@@ -9,6 +9,7 @@ extern crate futures;
 extern crate globset;
 extern crate hex;
 extern crate git2;
+extern crate ignore;
 extern crate indicatif;
 extern crate nextcloud_appinfo;
 extern crate nextcloud_appsignature;
@@ -21,7 +22,6 @@ extern crate serde_json;
 extern crate tar;
 extern crate tempdir;
 extern crate toml;
-extern crate walkdir;
 extern crate xdg;
 
 pub mod commands;

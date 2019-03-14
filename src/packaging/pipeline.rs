@@ -4,11 +4,11 @@ use std::path::{Path, PathBuf};
 use failure::Error;
 use flate2::write::GzEncoder;
 use flate2::Compression;
+use ignore::{DirEntry, WalkBuilder};
 use indicatif::ProgressBar;
 use nextcloud_appinfo::{get_appinfo, AppInfo};
 use pathdiff::diff_paths;
 use tempdir::TempDir;
-use walkdir::{DirEntry, WalkDir};
 
 use config;
 use packaging::commands::{self, PackageCommands};
@@ -208,9 +208,17 @@ impl BuiltApp {
 }
 
 fn build_file_list(build_path: &Path, excludes: &exclude::ExcludedFiles) -> Vec<DirEntry> {
-    WalkDir::new(build_path)
+    WalkBuilder::new(build_path)
+        .standard_filters(false)
+        .add_custom_ignore_filename(".nextcloudignore")
+        .build()
         .into_iter()
-        .filter_entry(|e| !excludes.is_excluded(e.path(), build_path))
+        .filter(|e| {
+            match e {
+                Ok(entry) => !excludes.is_excluded(entry.path(), build_path),
+                Err(_) => false
+            }
+        })
         .map(|e| e.unwrap())
         .collect()
 }
