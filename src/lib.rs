@@ -22,7 +22,6 @@ extern crate serde_json;
 extern crate tar;
 extern crate tempdir;
 extern crate toml;
-extern crate walkdir;
 extern crate xdg;
 
 pub mod commands;
