@@ -1,7 +1,6 @@
 use std::fs;
 use std::io;
 use std::path::Path;
-use std::process::{Command, Stdio};
 
 use error;
 use git2;

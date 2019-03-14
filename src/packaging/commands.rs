@@ -1,4 +1,4 @@
-use std::convert::Into;
+use std::convert::From;
 use std::path::Path;
 use std::process::{Command, Stdio};
 use std::vec::Vec;
@@ -9,7 +9,7 @@ use failure::Error;
 use indicatif::ProgressBar;
 
 pub trait PackageCommands {
-    fn execute(&self, cwd: &Path, progress: ProgressBar) -> Result<(), Error>;
+    fn execute(&self, cwd: &Path, progress: Option<&ProgressBar>) -> Result<(), Error>;
 }
 
 #[derive(Debug)]
@@ -18,10 +18,10 @@ pub struct CommandList {
 }
 
 impl PackageCommands for CommandList {
-    fn execute(&self, cwd: &Path, progress: ProgressBar) -> Result<(), Error> {
-        progress.set_message("Executing packaging commands...");
+    fn execute(&self, cwd: &Path, progress: Option<&ProgressBar>) -> Result<(), Error> {
+        progress.map(|prog| prog.set_message("Executing packaging commands..."));
         for cmd in &self.cmds {
-            progress.set_message(&format!("Running `{}`...", cmd));
+            progress.map(|prog| prog.set_message(&format!("Running `{}`...", cmd)));
             Command::new("sh")
                 .arg("-c")
                 .arg(cmd)
@@ -45,23 +45,23 @@ impl PackageCommands for CommandList {
                     }
                 })?;
         }
-        progress.finish_with_message("Executed all packaging commands.");
+        progress.map(|prog| prog.finish_with_message("Executed all packaging commands."));
         Ok(())
     }
 }
 
-impl<'a> Into<CommandList> for &'a PackageConfig {
-    fn into(self) -> CommandList {
+impl<'a> From<&'a PackageConfig> for CommandList {
+    fn from(config: &'a PackageConfig) -> Self {
         CommandList {
-            cmds: self.before_cmds().clone(),
+            cmds: config.before_cmds().clone(),
         }
     }
 }
 
-impl Into<CommandList> for PackageConfig {
-    fn into(self) -> CommandList {
+impl From<PackageConfig> for CommandList {
+    fn from(config: PackageConfig) -> Self {
         CommandList {
-            cmds: self.before_cmds().clone(),
+            cmds: config.before_cmds().clone(),
         }
     }
 }
