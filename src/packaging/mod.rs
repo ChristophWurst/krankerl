@@ -10,8 +10,8 @@ mod commands;
 mod exclude;
 mod pipeline;
 
-use console::default_spinner;
-use packaging::pipeline::App;
+use crate::console::default_spinner;
+use crate::packaging::pipeline::App;
 
 fn build_archive(
     app_path: PathBuf,

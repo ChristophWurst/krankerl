@@ -3,10 +3,10 @@ use std::path::Path;
 use std::process::{Command, Stdio};
 use std::vec::Vec;
 
-use config::app::PackageConfig;
-
 use failure::Error;
 use indicatif::ProgressBar;
+
+use crate::config::app::PackageConfig;
 
 pub trait PackageCommands {
     fn execute(&self, cwd: &Path, progress: Option<&ProgressBar>) -> Result<(), Error>;

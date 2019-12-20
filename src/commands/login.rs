@@ -1,5 +1,6 @@
-use config;
 use failure::Error;
+
+use crate::config;
 
 pub fn log_in_to_appstore(token: &String) -> Result<(), Error> {
     config::krankerl::set_appstore_token(token)

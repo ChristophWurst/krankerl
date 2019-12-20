@@ -6,6 +6,7 @@ description = "A CLI helper to manage Nextcloud apps"
 license-file = "LICENSE"
 keywords = ["nextcloud", "cli"]
 categories = ["development-tools", "development-tools::build-utils"]
+edition = "2018"
 
 [badges]
 travis-ci = { repository = "ChristophWurst/krankerl", branch = "master" }

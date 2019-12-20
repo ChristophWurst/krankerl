@@ -2,9 +2,10 @@ use std::fs;
 use std::io;
 use std::path::Path;
 
-use error;
 use git2;
 use failure::Error;
+
+use crate::error;
 
 pub fn clone_app(src: &Path, dst: &Path) -> Result<(), Error> {
     git2::Repository::clone(src.as_os_str()

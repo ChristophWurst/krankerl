@@ -6,7 +6,7 @@ use failure::Error;
 use indicatif::{MultiProgress, ProgressBar};
 use npm_scripts::NpmScripts;
 
-use console::default_spinner;
+use crate::console::default_spinner;
 
 fn find_npm_scripts(app_path: &PathBuf) -> Option<NpmScripts> {
     let in_root = NpmScripts::new(app_path);

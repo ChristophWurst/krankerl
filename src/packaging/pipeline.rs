@@ -10,9 +10,9 @@ use nextcloud_appinfo::{get_appinfo, AppInfo};
 use pathdiff::diff_paths;
 use tempdir::TempDir;
 
-use config;
-use packaging::commands::{self, PackageCommands};
-use packaging::{archive, artifacts, exclude};
+use crate::config;
+use crate::packaging::commands::{self, PackageCommands};
+use crate::packaging::{archive, artifacts, exclude};
 
 fn tmp_app_path(base: &Path, app_id: &str) -> PathBuf {
     let mut buf = base.to_path_buf();
