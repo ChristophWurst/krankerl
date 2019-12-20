@@ -1,12 +1,12 @@
-use failure::Error;
-
-use nextcloud_appinfo::get_appinfo;
-use nextcloud_appsignature;
-use std::env;
 use std::path::{Path, PathBuf};
 
+use dirs::home_dir;
+use failure::Error;
+use nextcloud_appinfo::get_appinfo;
+use nextcloud_appsignature;
+
 fn get_home_dir() -> Result<PathBuf, Error> {
-    env::home_dir().ok_or(format_err!("Could not resolve home dir",))
+    home_dir().ok_or(format_err!("Could not resolve home dir",))
 }
 
 fn get_private_key_path(app_id: &String) -> Result<PathBuf, Error> {
