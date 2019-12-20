@@ -4,16 +4,18 @@ use std::path::Path;
 use std::vec::Vec;
 
 use failure::Error;
+use ignore::DirEntry;
 use pathdiff::diff_paths;
 use tar::Builder;
-use ignore::DirEntry;
 
-pub fn build_app_archive<W>(root: &Path,
-                            app_path: &Path,
-                            files: Vec<DirEntry>,
-                            dest: W)
-                            -> Result<W, Error>
-    where W: io::Write
+pub fn build_app_archive<W>(
+    root: &Path,
+    app_path: &Path,
+    files: Vec<DirEntry>,
+    dest: W,
+) -> Result<W, Error>
+where
+    W: io::Write,
 {
     let mut archive = Builder::new(dest);
 

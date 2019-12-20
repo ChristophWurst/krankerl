@@ -14,10 +14,11 @@ pub mod packaging;
 
 use failure::Error;
 
-pub fn publish_app(url: &String,
-                   is_nightly: bool,
-                   signature: &String,
-                   api_token: &String)
-                   -> Box<futures::Future<Item = (), Error = Error> + Send> {
-    Box::new(nextcloud_appstore::publish_app(url, is_nightly, signature, api_token))
+pub async fn publish_app(
+    url: &String,
+    is_nightly: bool,
+    signature: &String,
+    api_token: &String,
+) -> Result<(), Error> {
+    nextcloud_appstore::publish_app(url, is_nightly, signature, api_token).await
 }

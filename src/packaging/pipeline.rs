@@ -213,11 +213,9 @@ fn build_file_list(build_path: &Path, excludes: &exclude::ExcludedFiles) -> Vec<
         .add_custom_ignore_filename(".nextcloudignore")
         .build()
         .into_iter()
-        .filter(|e| {
-            match e {
-                Ok(entry) => !excludes.is_excluded(entry.path(), build_path),
-                Err(_) => false
-            }
+        .filter(|e| match e {
+            Ok(entry) => !excludes.is_excluded(entry.path(), build_path),
+            Err(_) => false,
         })
         .map(|e| e.unwrap())
         .collect()
@@ -354,5 +352,4 @@ mod tests {
             "package.json should not be copied"
         );
     }
-
 }

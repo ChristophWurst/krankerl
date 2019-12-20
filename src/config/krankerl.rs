@@ -41,16 +41,13 @@ pub fn get_config() -> Result<Config, Error> {
 
     if contents.is_empty() {
         return Ok(Config {
-                      appstore_token: None,
-                      github_token: None,
-                  });
+            appstore_token: None,
+            github_token: None,
+        });
     }
 
-    let config =
-        serde_json::from_str(&contents).map_err(|err| {
-                                                    format_err!("could not parse config.json: {}",
-                                                                err)
-                                                });
+    let config = serde_json::from_str(&contents)
+        .map_err(|err| format_err!("could not parse config.json: {}", err));
 
     config
 }
