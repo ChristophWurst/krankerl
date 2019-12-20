@@ -1,7 +1,7 @@
 use failure::Error;
 use nextcloud_appinfo::get_appinfo;
 
-use occ::Occ;
+use crate::occ::Occ;
 use std::path::Path;
 
 pub fn enable_app() -> Result<(), Error> {

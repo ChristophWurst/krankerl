@@ -1,28 +1,9 @@
-extern crate base64;
-extern crate composer;
 #[macro_use]
 extern crate failure;
-extern crate flate2;
 #[cfg(test)]
 extern crate fs_extra;
-extern crate futures;
-extern crate globset;
-extern crate hex;
-extern crate git2;
-extern crate ignore;
-extern crate indicatif;
-extern crate nextcloud_appinfo;
-extern crate nextcloud_appsignature;
-extern crate nextcloud_appstore;
-extern crate npm_scripts;
-extern crate pathdiff;
 #[macro_use]
 extern crate serde_derive;
-extern crate serde_json;
-extern crate tar;
-extern crate tempdir;
-extern crate toml;
-extern crate xdg;
 
 pub mod commands;
 pub mod config;
