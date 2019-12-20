@@ -13,7 +13,6 @@ pub mod occ;
 pub mod packaging;
 
 use failure::Error;
-pub use nextcloud_appstore::{get_apps_and_releases, get_categories};
 
 pub fn publish_app(url: &String,
                    is_nightly: bool,

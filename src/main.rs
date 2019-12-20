@@ -1,9 +1,5 @@
-extern crate docopt;
-extern crate futures;
-extern crate krankerl;
 #[macro_use]
 extern crate serde_derive;
-extern crate tokio;
 
 use std::path::{Path, PathBuf};
 
@@ -19,8 +15,6 @@ Usage:
   krankerl enable
   krankerl disable
   krankerl init
-  krankerl list apps <version>
-  krankerl list categories
   krankerl login (--appstore | --github) <token>
   krankerl package [--shipped]
   krankerl publish [--nightly] <url>
@@ -40,12 +34,10 @@ struct Args {
     arg_url: Option<String>,
     arg_version: Option<String>,
     cmd_apps: bool,
-    cmd_categories: bool,
     cmd_clean: bool,
     cmd_enable: bool,
     cmd_disable: bool,
     cmd_init: bool,
-    cmd_list: bool,
     cmd_login: bool,
     cmd_package: bool,
     cmd_publish: bool,
@@ -81,34 +73,6 @@ fn main() {
             Ok(_) => println!("krankerl.toml created."),
             Err(e) => println!("could not create krankerl.toml: {}", e),
         };
-    } else if args.cmd_list && args.cmd_apps {
-        let version = args.arg_version.unwrap().to_owned();
-
-        let work = get_apps_and_releases(&version)
-            .map(move |apps| {
-                println!("found {} apps for {}:", apps.len(), version);
-                for app in apps {
-                    if app.isFeatured {
-                        println!("- {} (featured)", app.id);
-                    } else {
-                        println!("- {}", app.id);
-                    }
-                }
-            })
-            .map_err(|err| eprintln!("Could not load apps: {}", err));
-
-        tokio::run(work);
-    } else if args.cmd_list && args.cmd_categories {
-        let work = get_categories()
-            .map(|cats| {
-                     println!("found {} categories:", cats.len());
-                     for cat in cats {
-                         println!("- {}", cat.id)
-                     }
-                 })
-            .map_err(|err| eprintln!("Could not load categories: {}", err));
-
-        tokio::run(work);
     } else if args.cmd_clean {
         let cwd = PathBuf::from(".");
         krankerl::commands::clean(&cwd).unwrap_or_else(|e| {
