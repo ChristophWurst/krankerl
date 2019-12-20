@@ -573,7 +573,7 @@ dependencies = [
  "hex 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "ignore 0.4.10 (registry+https://github.com/rust-lang/crates.io-index)",
  "indicatif 0.13.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "nextcloud_appinfo 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "nextcloud_appinfo 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "nextcloud_appsignature 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "nextcloud_appstore 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "npm_scripts 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -753,7 +753,7 @@ dependencies = [
 
 [[package]]
 name = "nextcloud_appinfo"
-version = "0.4.1"
+version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1650,7 +1650,7 @@ dependencies = [
 "checksum miow 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)" = "8c1f2f3b1cf331de6896aabf6e9d55dca90356cc9960cca7eaaf408a355ae919"
 "checksum native-tls 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)" = "4b2df1a4c22fd44a62147fd8f13dd0f95c9d8ca7b2610299b2a2f9cf8964274e"
 "checksum net2 0.2.33 (registry+https://github.com/rust-lang/crates.io-index)" = "42550d9fb7b6684a6d404d9fa7250c2eb2646df731d1c06afc06dcee9e1bcf88"
-"checksum nextcloud_appinfo 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)" = "0431598208ee1f7062377366c870ace83ed1fd1f49e84d4117fe4e95f2fc5f43"
+"checksum nextcloud_appinfo 0.5.0 (registry+https://github.com/rust-lang/crates.io-index)" = "bde58eac5a0c8142aa5f84bfbec55b0a009be769428fae8153349ec2bbb68b5a"
 "checksum nextcloud_appsignature 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)" = "31bdcdaae6bb8b925e27716514ef8918e9bbb6662d2724b7f36f6cbc52bb89df"
 "checksum nextcloud_appstore 0.4.0 (registry+https://github.com/rust-lang/crates.io-index)" = "8d9cb698bab979f861eae51ec84f00f771d253abca36b08f01ae6664372c5cc2"
 "checksum npm_scripts 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)" = "e6e4c29bdde731d10ad74aba619204d746f4d5ed0e3f04c98f8713d2a89cf365"
