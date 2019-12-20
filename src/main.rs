@@ -4,7 +4,6 @@ extern crate serde_derive;
 use std::path::{Path, PathBuf};
 
 use docopt::Docopt;
-use futures::Future;
 use krankerl::*;
 
 const USAGE: &'static str = "
@@ -33,7 +32,6 @@ struct Args {
     arg_token: Option<String>,
     arg_url: Option<String>,
     arg_version: Option<String>,
-    cmd_apps: bool,
     cmd_clean: bool,
     cmd_enable: bool,
     cmd_disable: bool,
@@ -54,19 +52,20 @@ struct Args {
     flag_version: bool,
 }
 
-fn main() {
+#[tokio::main]
+async fn main() {
     let args: Args = Docopt::new(USAGE)
         .and_then(|d| d.deserialize())
         .unwrap_or_else(|e| e.exit());
 
     if args.cmd_enable {
         krankerl::commands::enable_app().unwrap_or_else(|e| {
-                                                            println!("an error occured: {}", e);
-                                                        });
+            println!("an error occured: {}", e);
+        });
     } else if args.cmd_disable {
         krankerl::commands::disable_app().unwrap_or_else(|e| {
-                                                             println!("an error occured: {}", e);
-                                                         });
+            println!("an error occured: {}", e);
+        });
     } else if args.cmd_init {
         let cwd = Path::new(".");
         match krankerl::commands::init(&cwd) {
@@ -76,8 +75,8 @@ fn main() {
     } else if args.cmd_clean {
         let cwd = PathBuf::from(".");
         krankerl::commands::clean(&cwd).unwrap_or_else(|e| {
-                                                           println!("an error occured: {}", e);
-                                                       });
+            println!("an error occured: {}", e);
+        });
     } else if args.cmd_login {
         if args.flag_appstore {
             let token = args.arg_token.unwrap();
@@ -103,19 +102,14 @@ fn main() {
                 }
                 let api_token = config.appstore_token.unwrap();
 
-                let work =
-                    publish_app(&url, is_nightly, &signature, &api_token).then(|res| match res {
-                                                                                   Ok(_) => {
+                match publish_app(&url, is_nightly, &signature, &api_token).await {
+                    Ok(_) => {
                         println!("app released successfully");
-                        Ok(())
                     }
-                                                                                   Err(e) => {
+                    Err(e) => {
                         eprintln!("an error occured: {:?}", e);
-                        Ok(())
                     }
-                                                                               });
-
-                tokio::run(work);
+                };
             }
             Err(err) => {
                 eprintln!("Could not sign package: {}", err);
@@ -130,8 +124,8 @@ fn main() {
     } else if args.cmd_up {
         let cwd = PathBuf::from(".");
         krankerl::commands::up(&cwd).unwrap_or_else(|e| {
-                                                        eprintln!("an error occured: {}", e);
-                                                    });
+            eprintln!("an error occured: {}", e);
+        });
     } else if args.cmd_version {
         let bump = if args.cmd_major {
             "major"
