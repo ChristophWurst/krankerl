@@ -55,15 +55,11 @@ impl Into<AppConfig> for ParsedAppConfig {
 #[derive(Debug)]
 pub struct PackageConfig {
     before_cmds: Vec<String>,
-    exclude: Vec<String>,
 }
 
 impl PackageConfig {
     pub fn before_cmds(&self) -> &Vec<String> {
         &self.before_cmds
-    }
-    pub fn exclude(&self) -> &Vec<String> {
-        &self.exclude
     }
 }
 
@@ -71,7 +67,6 @@ impl Into<PackageConfig> for ParsedPackageConfig {
     fn into(self) -> PackageConfig {
         PackageConfig {
             before_cmds: self.before_cmds.unwrap_or(vec![]),
-            exclude: self.exclude.unwrap_or(vec![]),
         }
     }
 }
@@ -80,12 +75,6 @@ impl Default for PackageConfig {
     fn default() -> Self {
         PackageConfig {
             before_cmds: vec![],
-            exclude: vec![
-                ".git".to_owned(),
-                ".gitignore".to_owned(),
-                "build".to_owned(),
-                "tests".to_owned(),
-            ],
         }
     }
 }
