@@ -3,10 +3,7 @@ use std::thread;
 
 use composer::Composer;
 use failure::Error;
-use indicatif::{MultiProgress, ProgressBar};
 use npm_scripts::NpmScripts;
-
-use crate::console::default_spinner;
 
 fn find_npm_scripts(app_path: &PathBuf) -> Option<NpmScripts> {
     let in_root = NpmScripts::new(app_path);
@@ -21,57 +18,48 @@ fn find_npm_scripts(app_path: &PathBuf) -> Option<NpmScripts> {
     }
 }
 
-fn npm_up(app_path: &PathBuf, pb: ProgressBar) -> Result<(), Error> {
-    pb.enable_steady_tick(200);
-
+fn npm_up(app_path: &PathBuf) -> Result<(), Error> {
     let npm_script = "build".to_owned();
 
     match find_npm_scripts(app_path) {
         Some(scripts) => {
-            pb.set_message(&format!("Installing npm packages..."));
+            println!("Installing npm packages...");
             scripts.install()?;
             let has_npm_build_task = scripts.has_script(&npm_script)?;
             if has_npm_build_task {
-                pb.set_message(&format!("Running npm build script..."));
+                println!("Running npm build script...");
                 scripts.run_script(&npm_script)?;
-                pb.finish_with_message(&format!("Installed npm packages and ran build script."));
+                println!("Installed npm packages and ran build script.");
             } else {
-                pb.finish_with_message(&format!("Installed npm packages."));
+                println!("Installed npm packages.");
             }
             Ok(())
         }
         None => {
-            pb.finish_with_message(&format!("No npm config found."));
+            println!("No npm config found.");
             Ok(())
         }
     }
 }
 
-fn composer_up(app_path: &PathBuf, pb: ProgressBar) -> Result<(), Error> {
-    pb.enable_steady_tick(200);
-
+fn composer_up(app_path: &PathBuf) -> Result<(), Error> {
     let composer = Composer::new(app_path);
     if composer.is_available() {
-        pb.set_message(&format!("Installing composer packages..."));
+        println!("Installing composer packages...");
         composer.install()?;
-        pb.finish_with_message(&format!("Installed composer packages."));
+        println!("Installed composer packages.");
     } else {
-        pb.finish_with_message(&format!("No composer config found."));
+        println!("No composer config found.");
     }
     Ok(())
 }
 
 pub fn up(app_path: &PathBuf) -> Result<(), Error> {
-    let m = MultiProgress::new();
-
-    let pb = m.add(default_spinner());
     let p1 = app_path.to_owned();
-    let t1 = thread::spawn(move || npm_up(&p1, pb));
-    let pb = m.add(default_spinner());
+    let t1 = thread::spawn(move || npm_up(&p1));
     let p2 = app_path.to_owned();
-    let t2 = thread::spawn(move || composer_up(&p2, pb));
+    let t2 = thread::spawn(move || composer_up(&p2));
 
-    m.join()?;
     t1.join().unwrap()?;
     t2.join().unwrap()?;
 
