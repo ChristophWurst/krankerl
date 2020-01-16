@@ -7,7 +7,6 @@ extern crate serde_derive;
 
 pub mod commands;
 pub mod config;
-mod console;
 pub mod error;
 pub mod occ;
 pub mod packaging;

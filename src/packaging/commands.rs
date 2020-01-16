@@ -4,12 +4,11 @@ use std::process::{Command, Stdio};
 use std::vec::Vec;
 
 use failure::Error;
-use indicatif::ProgressBar;
 
 use crate::config::app::PackageConfig;
 
 pub trait PackageCommands {
-    fn execute(&self, cwd: &Path, progress: Option<&ProgressBar>) -> Result<(), Error>;
+    fn execute(&self, cwd: &Path) -> Result<(), Error>;
 }
 
 #[derive(Debug)]
@@ -18,10 +17,10 @@ pub struct CommandList {
 }
 
 impl PackageCommands for CommandList {
-    fn execute(&self, cwd: &Path, progress: Option<&ProgressBar>) -> Result<(), Error> {
-        progress.map(|prog| prog.set_message("Executing packaging commands..."));
+    fn execute(&self, cwd: &Path) -> Result<(), Error> {
+        println!("Executing packaging commands...");
         for cmd in &self.cmds {
-            progress.map(|prog| prog.set_message(&format!("Running `{}`...", cmd)));
+            println!("Running `{}`...", cmd);
             Command::new("sh")
                 .arg("-c")
                 .arg(cmd)
@@ -45,7 +44,7 @@ impl PackageCommands for CommandList {
                     }
                 })?;
         }
-        progress.map(|prog| prog.finish_with_message("Executed all packaging commands."));
+        println!("Executed all packaging commands.");
         Ok(())
     }
 }
