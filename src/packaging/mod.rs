@@ -6,7 +6,6 @@ use failure::Error;
 mod archive;
 mod artifacts;
 mod commands;
-mod exclude;
 mod pipeline;
 
 use crate::packaging::pipeline::App;

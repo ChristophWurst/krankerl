@@ -11,7 +11,7 @@ use tempdir::TempDir;
 
 use crate::config;
 use crate::packaging::commands::{self, PackageCommands};
-use crate::packaging::{archive, artifacts, exclude};
+use crate::packaging::{archive, artifacts};
 
 fn tmp_app_path(base: &Path, app_id: &str) -> PathBuf {
     let mut buf = base.to_path_buf();
@@ -91,6 +91,9 @@ impl AppWithDependencies {
             Some(config) => (config, false),
             None => (config::app::AppConfig::default(), true),
         };
+        if !default && !config.package().before_cmds().is_empty() {
+            bail!("The exclude array in krankerl.toml was removed in 0.12. Use a .nextcloudignore instead.")
+        }
         let cmds = commands::CommandList::from(config.package());
         cmds.execute(&tmp_app_path(&self.tmp_dir.path(), self.app_info.id()))?;
 
@@ -99,30 +102,26 @@ impl AppWithDependencies {
         } else {
             println!("App built");
         }
-        Ok(BuiltApp::new(self, config))
+        Ok(BuiltApp::new(self))
     }
 }
 
 pub struct BuiltApp {
     app: App,
     app_info: AppInfo,
-    config: config::app::AppConfig,
     tmp_dir: TempDir,
 }
 
 impl BuiltApp {
-    pub fn new(with_deps: AppWithDependencies, config: config::app::AppConfig) -> Self {
+    pub fn new(with_deps: AppWithDependencies) -> Self {
         BuiltApp {
             app: with_deps.app,
             app_info: with_deps.app_info,
-            config: config,
             tmp_dir: with_deps.tmp_dir,
         }
     }
 
     pub fn into_archive(self) -> Result<AppArchive, Error> {
-        let excludes = exclude::ExcludedFiles::new(self.config.package().exclude())?;
-
         let mut compressed_archive_path = self.app.source_path.to_path_buf();
         compressed_archive_path.push("build");
         compressed_archive_path.push("artifacts");
@@ -138,7 +137,7 @@ impl BuiltApp {
         {
             let base = Path::new(self.app_info.id());
 
-            let file_list = build_file_list(&app_path, &excludes);
+            let file_list = build_file_list(&app_path);
             let encoder = archive::build_app_archive(&base, &app_path, file_list, encoder)?;
             encoder.finish()?;
         }
@@ -158,8 +157,7 @@ impl BuiltApp {
 
         let app_path = tmp_app_path(self.tmp_dir.path(), self.app_info.id());
         {
-            let excludes = exclude::ExcludedFiles::new(self.config.package().exclude())?;
-            for entry in build_file_list(&app_path, &excludes) {
+            for entry in build_file_list(&app_path) {
                 if !entry.metadata().unwrap().is_dir() {
                     let entry_path = entry.path();
                     if let Some(normalized) = diff_paths(&entry_path, &app_path) {
@@ -179,16 +177,12 @@ impl BuiltApp {
     }
 }
 
-fn build_file_list(build_path: &Path, excludes: &exclude::ExcludedFiles) -> Vec<DirEntry> {
+fn build_file_list(build_path: &Path) -> Vec<DirEntry> {
     WalkBuilder::new(build_path)
         .standard_filters(false)
         .add_custom_ignore_filename(".nextcloudignore")
         .build()
         .into_iter()
-        .filter(|e| match e {
-            Ok(entry) => !excludes.is_excluded(entry.path(), build_path),
-            Err(_) => false,
-        })
         .map(|e| e.unwrap())
         .collect()
 }
