@@ -91,9 +91,6 @@ impl AppWithDependencies {
             Some(config) => (config, false),
             None => (config::app::AppConfig::default(), true),
         };
-        if !default && !config.package().before_cmds().is_empty() {
-            bail!("The exclude array in krankerl.toml was removed in 0.12. Use a .nextcloudignore instead.")
-        }
         let cmds = commands::CommandList::from(config.package());
         cmds.execute(&tmp_app_path(&self.tmp_dir.path(), self.app_info.id()))?;
 

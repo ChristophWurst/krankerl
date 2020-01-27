@@ -65,6 +65,9 @@ impl PackageConfig {
 
 impl Into<PackageConfig> for ParsedPackageConfig {
     fn into(self) -> PackageConfig {
+        if self.exclude.is_some() {
+            panic!("The exclude array in krankerl.toml was removed in 0.12. Use a .nextcloudignore instead.")
+        }
         PackageConfig {
             before_cmds: self.before_cmds.unwrap_or(vec![]),
         }
