@@ -509,7 +509,7 @@ dependencies = [
 
 [[package]]
 name = "krankerl"
-version = "0.12.1"
+version = "0.12.2"
 dependencies = [
  "base64 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "composer 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
