@@ -117,7 +117,7 @@ name = "composer"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "failure 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -198,16 +198,16 @@ dependencies = [
 
 [[package]]
 name = "failure"
-version = "0.1.6"
+version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "backtrace 0.3.42 (registry+https://github.com/rust-lang/crates.io-index)",
- "failure_derive 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "failure_derive 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "failure_derive"
-version = "0.1.6"
+version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "proc-macro2 1.0.8 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -512,7 +512,7 @@ dependencies = [
  "composer 0.2.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "dirs 2.0.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "docopt 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "failure 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
  "flate2 1.0.13 (registry+https://github.com/rust-lang/crates.io-index)",
  "fs_extra 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "git2 0.12.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -697,7 +697,7 @@ name = "nextcloud_appinfo"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "failure 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
  "semver 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "xpath_reader 0.5.3 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -708,7 +708,7 @@ version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "base64 0.11.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "failure 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
  "openssl 0.10.26 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -717,7 +717,7 @@ name = "nextcloud_appstore"
 version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "failure 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
  "hyper 0.13.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "hyper-tls 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.104 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -730,7 +730,7 @@ name = "npm_scripts"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)",
+ "failure 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.104 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_derive 1.0.104 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_json 1.0.48 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -1416,8 +1416,8 @@ dependencies = [
 "checksum dirs 2.0.2 (registry+https://github.com/rust-lang/crates.io-index)" = "13aea89a5c93364a98e9b37b2fa237effbb694d5cfe01c5b70941f7eb087d5e3"
 "checksum dirs-sys 0.3.4 (registry+https://github.com/rust-lang/crates.io-index)" = "afa0b23de8fd801745c471deffa6e12d248f962c9fd4b4c33787b055599bde7b"
 "checksum docopt 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "7f525a586d310c87df72ebcd98009e57f1cc030c8c268305287a476beb653969"
-"checksum failure 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = "f8273f13c977665c5db7eb2b99ae520952fe5ac831ae4cd09d80c4c7042b5ed9"
-"checksum failure_derive 0.1.6 (registry+https://github.com/rust-lang/crates.io-index)" = "0bc225b78e0391e4b8683440bf2e63c2deeeb2ce5189eab46e2b68c6d3725d08"
+"checksum failure 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)" = "b8529c2421efa3066a5cbd8063d2244603824daccb6936b079010bb2aa89464b"
+"checksum failure_derive 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)" = "030a733c8287d6213886dd487564ff5c8f6aae10278b3588ed177f9d18f8d231"
 "checksum filetime 0.2.8 (registry+https://github.com/rust-lang/crates.io-index)" = "1ff6d4dab0aa0c8e6346d46052e93b13a16cf847b54ed357087c35011048cc7d"
 "checksum flate2 1.0.13 (registry+https://github.com/rust-lang/crates.io-index)" = "6bd6d6f4752952feb71363cffc9ebac9411b75b87c6ab6058c40c8900cf43c0f"
 "checksum fnv 1.0.6 (registry+https://github.com/rust-lang/crates.io-index)" = "2fad85553e09a6f881f739c29f0b00b0f01357c743266d478b68951ce23285f3"
