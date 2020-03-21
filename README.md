@@ -79,8 +79,10 @@ This will create a minimal configuration. Adjust it to your needs.
 ### Configuration overview
 #### Excluded files
 
+**The excluded files list is no longer supported in Krankerl from `v0.12.0` onwards. Use `.nextcloudignore` instead.**
+
 Certain files and directories of your repository shouldn't be part of the
-generated tarball. The `exclude` array in the `[packaging]` lists `glob`
+generated tarball. The `exclude` array in the `[package]` lists `glob`
 patterns of files and directories to exclude.
 
 Typical excludes are the `.git` directory, tests and configuration files that are
