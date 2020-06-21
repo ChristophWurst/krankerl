@@ -125,7 +125,10 @@ impl BuiltApp {
         artifacts::clear(&compressed_archive_path)?;
 
         compressed_archive_path.push(format!("{}.tar.gz", self.app_info.id()));
-        println!("Writing compressed app archive to {:?}...", compressed_archive_path);
+        println!(
+            "Writing compressed app archive to {:?}...",
+            compressed_archive_path
+        );
 
         let gz_archive_file = File::create(&compressed_archive_path)?;
         let encoder = GzEncoder::new(gz_archive_file, Compression::default());
