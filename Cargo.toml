@@ -32,7 +32,7 @@ tar = "0.4.26"
 tempdir = "0.3"
 tokio = { version = "0.2", features = ["full"] }
 toml = "0.5.6"
-pathdiff = "0.1.0"
+pathdiff = "0.2.0"
 xdg = "2.2.0"
 
 [dev-dependencies]
