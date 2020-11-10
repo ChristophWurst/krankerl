@@ -36,4 +36,4 @@ pathdiff = "0.2.0"
 xdg = "2.2.0"
 
 [dev-dependencies]
-fs_extra = "1.1.0"
+fs_extra = "1.2.0"
