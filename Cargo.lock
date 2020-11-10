@@ -801,16 +801,15 @@ dependencies = [
 
 [[package]]
 name = "nextcloud_appstore"
-version = "0.6.0"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b64b26b9db1c538a13380333df7da320590c3f065ca16b9a7bf72aa5b5989696"
+checksum = "d063d1ed7db2e97d7794464c54fa069f902d1ed957ae565ab7f72589bba5e234"
 dependencies = [
- "failure",
  "hyper",
  "hyper-tls",
  "serde",
- "serde_derive",
  "serde_json",
+ "thiserror",
 ]
 
 [[package]]
