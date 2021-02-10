@@ -1,6 +1,6 @@
 use std::convert::From;
 use std::path::Path;
-use std::process::{Command, Stdio};
+use std::process::Command;
 use std::vec::Vec;
 
 use failure::Error;
@@ -24,20 +24,20 @@ impl PackageCommands for CommandList {
             Command::new("sh")
                 .arg("-c")
                 .arg(cmd)
-                .stderr(Stdio::null())
-                .stdout(Stdio::null())
                 .current_dir(cwd)
-                .status()
+                .output()
                 .map_err(|e| format_err!("Cannot start command <{}>: ", e))
-                .and_then(|status| {
-                    if status.success() {
+                .and_then(|output| {
+                    if output.status.success() {
                         Ok(())
                     } else {
-                        match status.code() {
+                        match output.status.code() {
                             Some(code) => Err(format_err!(
-                                "Command <{}> returned exit status {:?}",
+                                "Command <{}> returned exit status {:?}\n\nstdout: {}\nstderr: {}",
                                 cmd,
-                                code
+                                code,
+                                String::from_utf8_lossy(&output.stdout),
+                                String::from_utf8_lossy(&output.stderr)
                             )),
                             None => Err(format_err!("Command <{}> was aborted by a signal", cmd)),
                         }
