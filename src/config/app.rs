@@ -1,8 +1,7 @@
 use std::convert::Into;
 use std::default::Default;
 use std::error::Error as StdErr;
-use std::fs::File;
-use std::io::prelude::*;
+use std::fs;
 use std::path::Path;
 
 use failure::Error;
@@ -83,29 +82,40 @@ impl Default for PackageConfig {
 }
 
 pub fn init_config(app_path: &Path) -> Result<(), Error> {
-    let mut path_buf = app_path.to_path_buf();
-    path_buf.push("krankerl.toml");
+    let config_path = app_path.join("krankerl.toml");
 
-    if let Ok(_) = File::open(&path_buf) {
+    if config_path.exists() {
         bail!(error::KrankerlError::Other {
             cause: "krankerl.toml already exists.".to_string()
         });
     }
 
-    let mut config_file = File::create(&path_buf)?;
-
-    config_file.write_all(
+    fs::write(
+        &config_path,
         r#"[package]
-exclude = [
-
-]
-
 before_cmds = [
 
 ]
-"#
-        .as_bytes(),
+"#,
     )?;
+
+    let ignore_path = app_path.join(".nextcloudignore");
+    if !ignore_path.exists() {
+        fs::write(
+            &ignore_path,
+            r#".drone
+.git
+.github
+.gitignore
+.scrutinizer.yml
+.travis.yml
+.tx
+krankerl.toml
+screenshots
+.nextcloudignore
+"#,
+        )?;
+    }
 
     Ok(())
 }
@@ -186,11 +196,24 @@ mod tests {
         let (app_path, tmp) = prepare_fs_test("app1");
 
         let krankerl_path = app_path.join("krankerl.toml");
-        File::open(&krankerl_path).unwrap_err();
+        assert!(!krankerl_path.exists());
 
         init_config(&app_path).unwrap();
 
-        File::open(&krankerl_path).unwrap();
+        assert!(krankerl_path.exists());
+        tmp.close().unwrap();
+    }
+
+    #[test]
+    fn test_init_creates_ignore() {
+        let (app_path, tmp) = prepare_fs_test("app1");
+
+        let ignore_path = app_path.join(".nextcloudignore");
+        assert!(!ignore_path.exists());
+
+        init_config(&app_path).unwrap();
+
+        assert!(ignore_path.exists());
         tmp.close().unwrap();
     }
 
@@ -199,11 +222,24 @@ mod tests {
         let (app_path, tmp) = prepare_fs_test("app2");
 
         let krankerl_path = app_path.join("krankerl.toml");
-        File::open(&krankerl_path).unwrap();
+        assert!(krankerl_path.exists());
 
-        init_config(&app_path).unwrap_err();
+        assert!(init_config(&app_path).is_err());
 
-        File::open(&krankerl_path).unwrap();
+        assert!(krankerl_path.exists());
+        tmp.close().unwrap();
+    }
+
+    #[test]
+    fn test_init_doesnt_change_ignore() {
+        let (app_path, tmp) = prepare_fs_test("app1");
+
+        let ignore_path = app_path.join(".nextcloudignore");
+        fs::write(&ignore_path, "dummy");
+
+        init_config(&app_path).unwrap();
+
+        assert_eq!("dummy", fs::read_to_string(&ignore_path).unwrap());
         tmp.close().unwrap();
     }
 
