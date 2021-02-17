@@ -19,5 +19,5 @@ pub async fn publish_app(
     signature: &String,
     api_token: &String,
 ) -> Result<(), Error> {
-    nextcloud_appstore::publish_app(url, is_nightly, signature, api_token).await
+    Ok(nextcloud_appstore::publish_app(url, is_nightly, signature, api_token).await?)
 }
