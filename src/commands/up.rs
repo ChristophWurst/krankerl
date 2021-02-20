@@ -1,8 +1,8 @@
 use std::path::PathBuf;
 use std::thread;
 
+use color_eyre::Result;
 use composer::Composer;
-use failure::Error;
 use npm_scripts::NpmScripts;
 
 fn find_npm_scripts(app_path: &PathBuf) -> Option<NpmScripts> {
@@ -18,17 +18,21 @@ fn find_npm_scripts(app_path: &PathBuf) -> Option<NpmScripts> {
     }
 }
 
-fn npm_up(app_path: &PathBuf) -> Result<(), Error> {
+fn npm_up(app_path: &PathBuf) -> Result<()> {
     let npm_script = "build".to_owned();
 
     match find_npm_scripts(app_path) {
         Some(scripts) => {
             println!("Installing npm packages...");
-            scripts.install()?;
-            let has_npm_build_task = scripts.has_script(&npm_script)?;
+            scripts.install().map_err(|fail| fail.compat())?;
+            let has_npm_build_task = scripts
+                .has_script(&npm_script)
+                .map_err(|fail| fail.compat())?;
             if has_npm_build_task {
                 println!("Running npm build script...");
-                scripts.run_script(&npm_script)?;
+                scripts
+                    .run_script(&npm_script)
+                    .map_err(|fail| fail.compat())?;
                 println!("Installed npm packages and ran build script.");
             } else {
                 println!("Installed npm packages.");
@@ -42,11 +46,11 @@ fn npm_up(app_path: &PathBuf) -> Result<(), Error> {
     }
 }
 
-fn composer_up(app_path: &PathBuf) -> Result<(), Error> {
+fn composer_up(app_path: &PathBuf) -> Result<()> {
     let composer = Composer::new(app_path);
     if composer.is_available() {
         println!("Installing composer packages...");
-        composer.install()?;
+        composer.install().map_err(|fail| fail.compat())?;
         println!("Installed composer packages.");
     } else {
         println!("No composer config found.");
@@ -54,7 +58,7 @@ fn composer_up(app_path: &PathBuf) -> Result<(), Error> {
     Ok(())
 }
 
-pub fn up(app_path: &PathBuf) -> Result<(), Error> {
+pub fn up(app_path: &PathBuf) -> Result<()> {
     let p1 = app_path.to_owned();
     let t1 = thread::spawn(move || npm_up(&p1));
     let p2 = app_path.to_owned();

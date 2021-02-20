@@ -1,7 +1,7 @@
 use std::fs::{copy, create_dir_all, File};
 use std::path::{Path, PathBuf};
 
-use failure::Error;
+use color_eyre::Result;
 use flate2::write::GzEncoder;
 use flate2::Compression;
 use ignore::{DirEntry, WalkBuilder};
@@ -30,7 +30,7 @@ impl App {
         }
     }
 
-    pub fn clone(self) -> Result<ClonedApp, Error> {
+    pub fn clone(self) -> Result<ClonedApp> {
         println!("Cloning app");
 
         let app_info = get_appinfo(&self.source_path)?;
@@ -57,7 +57,7 @@ impl ClonedApp {
         }
     }
 
-    pub fn install_dependencies(self) -> Result<AppWithDependencies, Error> {
+    pub fn install_dependencies(self) -> Result<AppWithDependencies> {
         // TODO: automatically install npm and composer dependencies
         // progress
         //    .as_ref()
@@ -83,7 +83,7 @@ impl AppWithDependencies {
         }
     }
 
-    pub fn build(self) -> Result<BuiltApp, Error> {
+    pub fn build(self) -> Result<BuiltApp> {
         println!("Building app");
 
         let opt_config = config::app::get_config(&self.app.source_path)?;
@@ -118,7 +118,7 @@ impl BuiltApp {
         }
     }
 
-    pub fn into_archive(self) -> Result<AppArchive, Error> {
+    pub fn into_archive(self) -> Result<AppArchive> {
         let mut compressed_archive_path = self.app.source_path.to_path_buf();
         compressed_archive_path.push("build");
         compressed_archive_path.push("artifacts");
@@ -147,7 +147,7 @@ impl BuiltApp {
         Ok(AppArchive::new(self))
     }
 
-    pub fn into_shipped(self) -> Result<ShippedApp, Error> {
+    pub fn into_shipped(self) -> Result<ShippedApp> {
         let mut ship_path = self.app.source_path.to_path_buf();
         ship_path.push("build");
         ship_path.push("artifacts");

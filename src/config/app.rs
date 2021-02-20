@@ -1,13 +1,11 @@
 use std::convert::Into;
 use std::default::Default;
-use std::error::Error as StdErr;
 use std::fs;
 use std::path::Path;
 
-use failure::Error;
+use color_eyre::{eyre::WrapErr, Report, Result};
 use toml;
 
-use super::super::error;
 use super::{ConfigFileReader, ConfigReader};
 
 #[derive(Debug, Deserialize)]
@@ -81,13 +79,11 @@ impl Default for PackageConfig {
     }
 }
 
-pub fn init_config(app_path: &Path) -> Result<(), Error> {
+pub fn init_config(app_path: &Path) -> Result<()> {
     let config_path = app_path.join("krankerl.toml");
 
     if config_path.exists() {
-        bail!(error::KrankerlError::Other {
-            cause: "krankerl.toml already exists.".to_string()
-        });
+        return Err(Report::msg("krankerl.toml already exists"));
     }
 
     fs::write(
@@ -97,7 +93,8 @@ before_cmds = [
 
 ]
 "#,
-    )?;
+    )
+    .wrap_err("Failed to write krankerl.toml")?;
 
     let ignore_path = app_path.join(".nextcloudignore");
     if !ignore_path.exists() {
@@ -114,27 +111,25 @@ krankerl.toml
 screenshots
 .nextcloudignore
 "#,
-        )?;
+        )
+        .wrap_err("Failed to write .nextcloudignore")?;
     }
 
     Ok(())
 }
 
-fn load_config<R>(reader: &R) -> Result<String, Error>
+fn load_config<R>(reader: &R) -> Result<String>
 where
     R: ConfigReader,
 {
-    let as_string = reader.read()?;
-
-    Ok(as_string)
+    reader.read()
 }
 
-fn parse_config(config: String) -> Result<ParsedAppConfig, Error> {
-    toml::from_str(&config)
-        .map_err(|e| format_err!("could not parse krankerl.toml: {}", e.description()))
+fn parse_config(config: String) -> Result<ParsedAppConfig> {
+    toml::from_str(&config).wrap_err("Failed to parse config as toml")
 }
 
-pub fn get_config(path: &Path) -> Result<Option<AppConfig>, Error> {
+pub fn get_config(path: &Path) -> Result<Option<AppConfig>> {
     let mut path_buf = path.to_path_buf();
     path_buf.push("krankerl.toml");
     let reader = ConfigFileReader::new(path_buf);
@@ -149,7 +144,6 @@ pub fn get_config(path: &Path) -> Result<Option<AppConfig>, Error> {
 
 #[cfg(test)]
 mod tests {
-    use std::fs::File;
     use std::path::PathBuf;
 
     use fs_extra::dir::{copy, CopyOptions};
@@ -164,7 +158,7 @@ mod tests {
             true
         }
 
-        fn read(&self) -> Result<String, Error> {
+        fn read(&self) -> Result<String> {
             Ok("some config".to_owned())
         }
     }
@@ -235,7 +229,7 @@ mod tests {
         let (app_path, tmp) = prepare_fs_test("app1");
 
         let ignore_path = app_path.join(".nextcloudignore");
-        fs::write(&ignore_path, "dummy");
+        fs::write(&ignore_path, "dummy").unwrap();
 
         init_config(&app_path).unwrap();
 

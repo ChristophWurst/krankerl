@@ -1,6 +1,6 @@
-use failure::Error;
+use color_eyre::{eyre::WrapErr, Result};
 use serde_json;
-use std::fs::OpenOptions;
+use std::fs::{File, OpenOptions};
 use std::io::prelude::*;
 use xdg;
 
@@ -10,7 +10,7 @@ pub struct Config {
     pub github_token: Option<String>,
 }
 
-pub fn set_appstore_token(token: &String) -> Result<(), Error> {
+pub fn set_appstore_token(token: &String) -> Result<()> {
     let mut config = get_config()?;
 
     config.appstore_token = Some(token.to_owned());
@@ -19,23 +19,34 @@ pub fn set_appstore_token(token: &String) -> Result<(), Error> {
     Ok(())
 }
 
-pub fn set_github_token(token: &String) -> Result<(), Error> {
-    let mut config = get_config()?;
+pub fn set_github_token(token: &String) -> Result<()> {
+    let mut config = get_config().wrap_err("Failed to load config")?;
 
     config.github_token = Some(token.to_owned());
-    save_config(&config)?;
+    save_config(&config).wrap_err("Failed to save config")?;
 
     Ok(())
 }
 
-pub fn get_config() -> Result<Config, Error> {
-    let xdg_dirs = xdg::BaseDirectories::with_prefix("krankerl")?;
-    let config_path = xdg_dirs.place_config_file("config.json")?;
-    let mut config_file = OpenOptions::new()
+fn open_config() -> Result<File> {
+    let xdg_dirs =
+        xdg::BaseDirectories::with_prefix("krankerl").wrap_err("Failed to get config path")?;
+    let config_path = xdg_dirs
+        .place_config_file("config.json")
+        .wrap_err("Failed to get config path")?;
+    OpenOptions::new()
         .read(true)
         .write(true)
         .create(true)
-        .open(config_path)?;
+        .open(&config_path)
+        .wrap_err(format!(
+            "Failed to open config file '{}'",
+            config_path.to_string_lossy()
+        ))
+}
+
+pub fn get_config() -> Result<Config> {
+    let mut config_file = open_config()?;
     let mut contents = String::new();
     config_file.read_to_string(&mut contents)?;
 
@@ -46,23 +57,10 @@ pub fn get_config() -> Result<Config, Error> {
         });
     }
 
-    let config = serde_json::from_str(&contents)
-        .map_err(|err| format_err!("could not parse config.json: {}", err));
-
-    config
+    serde_json::from_str(&contents).wrap_err("Failed to parse config.json")
 }
 
-fn save_config(config: &Config) -> Result<(), Error> {
-    let xdg_dirs = xdg::BaseDirectories::with_prefix("krankerl")?;
-    let config_path = xdg_dirs.place_config_file("config.json")?;
-    let mut config_file = OpenOptions::new()
-        .write(true)
-        .create(true)
-        .open(config_path)?;
-
-    let serialized = serde_json::to_string_pretty(config)?;
-
-    config_file.write_all(serialized.as_bytes())?;
-
-    Ok(())
+fn save_config(config: &Config) -> Result<()> {
+    let mut config_file = open_config()?;
+    serde_json::to_writer_pretty(&mut config_file, config).wrap_err("Failed to write config file")
 }

@@ -3,6 +3,8 @@ extern crate serde_derive;
 
 use std::path::{Path, PathBuf};
 
+use color_eyre::eyre::WrapErr;
+use color_eyre::Result;
 use docopt::Docopt;
 use krankerl::*;
 
@@ -53,79 +55,59 @@ struct Args {
 }
 
 #[tokio::main]
-async fn main() {
+async fn main() -> Result<()> {
+    color_eyre::install()?;
+
     let args: Args = Docopt::new(USAGE)
         .and_then(|d| d.deserialize())
         .unwrap_or_else(|e| e.exit());
 
     if args.cmd_enable {
-        krankerl::commands::enable_app().unwrap_or_else(|e| {
-            println!("an error occured: {}", e);
-        });
+        krankerl::commands::enable_app()?;
     } else if args.cmd_disable {
-        krankerl::commands::disable_app().unwrap_or_else(|e| {
-            println!("an error occured: {}", e);
-        });
+        krankerl::commands::disable_app()?;
     } else if args.cmd_init {
         let cwd = Path::new(".");
-        match krankerl::commands::init(&cwd) {
-            Ok(_) => println!("krankerl.toml created."),
-            Err(e) => println!("could not create krankerl.toml: {}", e),
-        };
+        krankerl::commands::init(&cwd).wrap_err("could not create krankerl.toml")?;
+        println!("krankerl.toml created.");
     } else if args.cmd_clean {
         let cwd = PathBuf::from(".");
-        krankerl::commands::clean(&cwd).unwrap_or_else(|e| {
-            println!("an error occured: {}", e);
-        });
+        krankerl::commands::clean(&cwd)?;
     } else if args.cmd_login {
         if args.flag_appstore {
             let token = args.arg_token.unwrap();
-            krankerl::commands::log_in_to_appstore(&token).expect("could not save appstore token");
+            krankerl::commands::log_in_to_appstore(&token)
+                .wrap_err("could not save appstore token")?;
         } else if args.flag_github {
             let token = args.arg_token.unwrap();
-            krankerl::commands::log_in_to_github(&token).expect("could not save github token");
+            krankerl::commands::log_in_to_github(&token).wrap_err("could not save github token")?;
         }
     } else if args.cmd_package {
         krankerl::commands::package_app(&PathBuf::from("."), args.flag_shipped)
-            .unwrap_or_else(|e| println!("could not package app: {}", e));
+            .wrap_err("could not package app")?;
     } else if args.cmd_publish {
         let url = args.arg_url.unwrap();
         let is_nightly = args.flag_nightly;
 
-        match krankerl::commands::sign_package() {
-            Ok(signature) => {
-                let config = config::krankerl::get_config().expect("could not load config");
+        let signature = krankerl::commands::sign_package().wrap_err("Could not sign package")?;
+        let config = config::krankerl::get_config().wrap_err("could not load config")?;
 
-                if !config.appstore_token.is_some() {
-                    println!("No appstore token set, run: krankerl login --appstore <token>");
-                    return;
-                }
-                let api_token = config.appstore_token.unwrap();
+        let api_token = match config.appstore_token {
+            None => {
+                println!("No appstore token set, run: krankerl login --appstore <token>");
+                return Ok(());
+            }
+            Some(api_token) => api_token,
+        };
 
-                match publish_app(&url, is_nightly, &signature, &api_token).await {
-                    Ok(_) => {
-                        println!("app released successfully");
-                    }
-                    Err(e) => {
-                        eprintln!("an error occured: {:?}", e);
-                    }
-                };
-            }
-            Err(err) => {
-                eprintln!("Could not sign package: {}", err);
-            }
-        }
+        publish_app(&url, is_nightly, &signature, &api_token).await?;
+        println!("app released successfully");
     } else if args.cmd_sign && args.flag_package {
-        let signature = krankerl::commands::sign_package();
-        match signature {
-            Ok(signature) => println!("Package signature: {}", signature),
-            Err(err) => eprintln!("an error occured: {}", err),
-        }
+        let signature = krankerl::commands::sign_package()?;
+        println!("Package signature: {}", signature);
     } else if args.cmd_up {
         let cwd = PathBuf::from(".");
-        krankerl::commands::up(&cwd).unwrap_or_else(|e| {
-            eprintln!("an error occured: {}", e);
-        });
+        krankerl::commands::up(&cwd)?;
     } else if args.cmd_version {
         let bump = if args.cmd_major {
             "major"
@@ -135,9 +117,10 @@ async fn main() {
             "patch"
         };
 
-        krankerl::commands::bump_version(bump)
-            .unwrap_or_else(|e| eprintln!("Could not bump version: {}", e))
+        krankerl::commands::bump_version(bump).wrap_err("Could not bump version")?;
     } else if args.flag_version {
         eprintln!(env!("CARGO_PKG_VERSION"));
     }
+
+    Ok(())
 }
