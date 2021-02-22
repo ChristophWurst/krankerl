@@ -3,12 +3,13 @@ use std::path::Path;
 use std::process::Command;
 use std::vec::Vec;
 
-use failure::Error;
+use color_eyre::{Report, Result};
 
 use crate::config::app::PackageConfig;
+use color_eyre::eyre::WrapErr;
 
 pub trait PackageCommands {
-    fn execute(&self, cwd: &Path) -> Result<(), Error>;
+    fn execute(&self, cwd: &Path) -> Result<()>;
 }
 
 #[derive(Debug)]
@@ -17,7 +18,7 @@ pub struct CommandList {
 }
 
 impl PackageCommands for CommandList {
-    fn execute(&self, cwd: &Path) -> Result<(), Error> {
+    fn execute(&self, cwd: &Path) -> Result<()> {
         println!("Executing packaging commands...");
         for cmd in &self.cmds {
             println!("Running `{}`...", cmd);
@@ -26,20 +27,23 @@ impl PackageCommands for CommandList {
                 .arg(cmd)
                 .current_dir(cwd)
                 .output()
-                .map_err(|e| format_err!("Cannot start command <{}>: ", e))
+                .wrap_err_with(|| format!("Cannot start command <{}>: ", cmd))
                 .and_then(|output| {
                     if output.status.success() {
                         Ok(())
                     } else {
                         match output.status.code() {
-                            Some(code) => Err(format_err!(
+                            Some(code) => Err(Report::msg(format!(
                                 "Command <{}> returned exit status {:?}\n\nstdout: {}\nstderr: {}",
                                 cmd,
                                 code,
                                 String::from_utf8_lossy(&output.stdout),
                                 String::from_utf8_lossy(&output.stderr)
-                            )),
-                            None => Err(format_err!("Command <{}> was aborted by a signal", cmd)),
+                            ))),
+                            None => Err(Report::msg(format!(
+                                "Command <{}> was aborted by a signal",
+                                cmd
+                            ))),
                         }
                     }
                 })?;
