@@ -762,9 +762,9 @@ dependencies = [
 
 [[package]]
 name = "nextcloud_appsignature"
-version = "0.6.0"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e81792c91dbbd437aa67563542fa500af8d0870006f4c73b520cc3fe49fb276a"
+checksum = "fa1e13212b30fcba21e73c6557a1a1ec894ddb955c94ea4195bf60d5423ae20e"
 dependencies = [
  "base64",
  "rsa",
