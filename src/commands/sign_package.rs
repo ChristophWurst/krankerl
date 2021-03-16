@@ -1,3 +1,4 @@
+use std::fs::File;
 use std::path::{Path, PathBuf};
 
 use color_eyre::{eyre::WrapErr, Report, Result};
@@ -40,7 +41,8 @@ pub fn sign_package() -> Result<String> {
         ));
     }
 
-    let signature = nextcloud_appsignature::sign_package(&key_path, &package_path)
+    let mut package = File::open(&package_path)?;
+    let signature = nextcloud_appsignature::sign_package(&key_path, &mut package)
         .wrap_err("Failed to sign package")?;
 
     Ok(signature)
