@@ -582,7 +582,7 @@ dependencies = [
 
 [[package]]
 name = "krankerl"
-version = "0.13.0"
+version = "0.13.1"
 dependencies = [
  "base64",
  "color-eyre",
