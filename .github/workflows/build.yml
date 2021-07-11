@@ -4,12 +4,15 @@ jobs:
   build:
     name: Rust project
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        toolchain: [stable, beta, nightly]
     steps:
       - uses: actions/checkout@v2
 
       - uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: ${{ matrix.toolchain }}
 
       - run: |
           export BUILD_VERSION="1.0.0"
