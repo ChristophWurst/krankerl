@@ -1,0 +1,23 @@
+name: Build
+on: [push]
+jobs:
+  build:
+    name: Rust project
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+
+      - run: |
+          export BUILD_VERSION="1.0.0"
+          cargo install -f cargo-deb
+          cargo build --release
+          cargo deb
+          
+      - uses: actions/upload-artifact@v2.2.4
+        with:
+          name: target
+          path: target/**
