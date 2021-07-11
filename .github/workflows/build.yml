@@ -19,10 +19,10 @@ jobs:
           
       - uses: actions/upload-artifact@v2.2.4
         with:
-          name: krankerl
-          path: target/debian/krankerl_1.0.0_amd64.deb
+          name: krankerl.deb
+          path: target/debian/krankerl_0.13.1_amd64.deb
 
       - uses: actions/upload-artifact@v2.2.4
         with:
-          name: krankerl.deb
+          name: krankerl
           path: target/release/krankerl
