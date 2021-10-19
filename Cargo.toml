@@ -33,7 +33,7 @@ tempdir = "0.3"
 tokio = { version = "1.5", features = ["full"] }
 toml = "0.5.8"
 pathdiff = "0.2.1"
-xdg = "2.3.0"
+xdg = "2.4.0"
 
 [dev-dependencies]
 fs_extra = "1.2.0"
