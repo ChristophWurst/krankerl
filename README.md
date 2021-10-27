@@ -7,6 +7,24 @@
 
 A CLI helper to manage [Nextcloud](https://nextcloud.com/) apps.
 
+## Installation
+
+* [Arch Linux](https://aur.archlinux.org/packages/krankerl-bin/)
+* [Arch Linux (source build)](https://aur.archlinux.org/packages/krankerl)
+* [Debian and derivatives](https://github.com/ChristophWurst/krankerl/releases)
+* [Linux (generic)](https://github.com/ChristophWurst/krankerl/releases)
+
+### Source build
+
+You can build the application from source with the help of [Cargo](https://doc.rust-lang.org/cargo/)
+
+```
+cargo install --git https://github.com/ChristophWurst/krankerl
+```
+[More info about Cargo install](https://doc.rust-lang.org/cargo/commands/cargo-install.html)
+
+## Usage
+
 ```
 Usage:
   krankerl clean
