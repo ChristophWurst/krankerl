@@ -12,10 +12,11 @@ jobs:
     name: Unit tests
     steps:
     - uses: actions/checkout@v2
-    - name: Install latest nightly
+    - name: Install toolchain
       uses: actions-rs/toolchain@v1
       with:
           toolchain: stable
+    - uses: Swatinem/rust-cache@v1
     - name: Build
       uses: actions-rs/cargo@v1
       with:
