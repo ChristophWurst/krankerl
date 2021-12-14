@@ -1,0 +1,40 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    name: Release
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install Rust toolchain
+      uses: actions-rs/toolchain@v1
+      with:
+          toolchain: stable
+    - uses: Swatinem/rust-cache@v1
+    - name: Install cargo-deb
+      uses: actions-rs/cargo@v1
+      with:
+        command: install
+        args: cargo-deb
+    - name: Build
+      uses: actions-rs/cargo@v1
+      with:
+        command: build
+        args: --release
+    - name: Create deb package
+      uses: actions-rs/cargo@v1
+      with:
+        command: deb
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: |
+          target/release/krankerl
+          target/debian/krankerl_*_amd64.deb
+
