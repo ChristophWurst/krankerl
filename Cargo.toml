@@ -8,9 +8,6 @@ keywords = ["nextcloud", "cli"]
 categories = ["development-tools", "development-tools::build-utils"]
 edition = "2018"
 
-[badges]
-travis-ci = { repository = "ChristophWurst/krankerl", branch = "master" }
-
 [dependencies]
 base64 = "0.13"
 composer = "0.2"

@@ -1,6 +1,5 @@
 # Krankerl
 
-[![Build Status](https://travis-ci.org/ChristophWurst/krankerl.svg?branch=master)](https://travis-ci.org/ChristophWurst/krankerl)
 [![Crates.io](https://img.shields.io/crates/v/krankerl.svg)](https://crates.io/crates/krankerl)
 [![Crates.io](https://img.shields.io/crates/d/krankerl.svg)](https://crates.io/crates/krankerl)
 [![AUR](https://img.shields.io/aur/version/krankerl.svg)](https://aur.archlinux.org/packages/krankerl/)
