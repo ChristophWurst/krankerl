@@ -11,7 +11,7 @@ edition = "2018"
 [dependencies]
 base64 = "0.13"
 composer = "0.2"
-color-eyre = "0.5"
+color-eyre = "0.6"
 docopt = "1.1"
 dirs = "4.0"
 flate2 = "1.0"
