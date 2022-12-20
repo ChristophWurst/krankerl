@@ -33,6 +33,7 @@ jobs:
           github-token: ${{ secrets.RELEASE_PAT }}
           pre-commit: build/pre-commit.js
           release-count: 0
+          version-file: Cargo.toml
           skip-version-file: true
       - name: Create Github Release
         uses: actions/create-release@v1
