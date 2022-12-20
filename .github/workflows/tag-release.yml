@@ -36,12 +36,3 @@ jobs:
           release-count: 0
           version-file: Cargo.toml
           skip-version-file: true
-      - name: Create Github Release
-        uses: actions/create-release@v1
-        if: ${{ steps.changelog.outputs.skipped == 'false' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }}
-        with:
-          tag_name: ${{ steps.changelog.outputs.tag }}
-          release_name: ${{ steps.changelog.outputs.tag }}
-          body: ${{ steps.changelog.outputs.clean_changelog }}
