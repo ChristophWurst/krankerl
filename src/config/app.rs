@@ -16,7 +16,6 @@ struct ParsedAppConfig {
 #[derive(Debug, Deserialize)]
 struct ParsedPackageConfig {
     before_cmds: Option<Vec<String>>,
-    exclude: Option<Vec<String>>,
 }
 
 #[derive(Debug)]
@@ -62,9 +61,6 @@ impl PackageConfig {
 
 impl Into<PackageConfig> for ParsedPackageConfig {
     fn into(self) -> PackageConfig {
-        if self.exclude.is_some() {
-            panic!("The exclude array in krankerl.toml was removed in 0.12. Use a .nextcloudignore instead.")
-        }
         PackageConfig {
             before_cmds: self.before_cmds.unwrap_or(vec![]),
         }
@@ -261,23 +257,6 @@ mod tests {
     fn test_parse_simple_config() {
         let toml = r#"
             [package]
-            exclude = []
-        "#;
-
-        let config = parse_config(toml.to_owned());
-
-        assert!(config.is_ok());
-    }
-
-    #[test]
-    fn test_parse_config_without_commands() {
-        let toml = r#"
-            [package]
-            exclude = [
-                ".git",
-                "composer.json",
-                "composer.lock",
-            ]
         "#;
 
         let config = parse_config(toml.to_owned());
@@ -293,9 +272,7 @@ mod tests {
             "composer install",
             "npm install",
             "npm run build",
-        ]
-
-        exclude = []"#;
+        ]"#;
 
         let config = parse_config(toml.to_owned());
 
