@@ -80,7 +80,7 @@ These are the steps Krankerl executes to package an app:
 * Delete `build/artifacts` if it exists
 * Clone current directory to `build/artifacts/<app_id>`
 * Run pre-packaging commands
-* Build list of files and directories that are not excluded by any `exclude` rule
+* Build list of files and directories that are not excluded by `.nextcloudignore`
 * Pack and compress those files and directories into a `build/artifacts/<app_id>.tar.gz` archive
 
 ### Initialize configuration
@@ -96,26 +96,9 @@ This will create a minimal configuration. Adjust it to your needs.
 ### Configuration overview
 #### Excluded files
 
-**The excluded files list is no longer supported in Krankerl from `v0.12.0` onwards. Use `.nextcloudignore` instead.**
+To exclude files from packaging, commit a `.nextcloudignore` that matches all directories
+and files to exclude. The syntax is the one of a gitignore.
 
-Certain files and directories of your repository shouldn't be part of the
-generated tarball. The `exclude` array in the `[package]` lists `glob`
-patterns of files and directories to exclude.
-
-Typical excludes are the `.git` directory, tests and configuration files that are
-only required during development.
-
-```toml
-[package]
-exclude = [
-    ".git",
-    "composer.json",
-    "composer.lock",
-    "krankerl.toml",
-    "node_modules",
-    "tests",
-]
-```
 #### Pre-package commands
 
 Building app archives often requires execution of a few commands. Common

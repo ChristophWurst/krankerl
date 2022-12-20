@@ -3,8 +3,3 @@ before_cmds = [
 	"composer install",
 	"asdflö",
 ]
-exclude = [
-	".git",
-	".gitignore",
-	"krankerl.toml",
-]
