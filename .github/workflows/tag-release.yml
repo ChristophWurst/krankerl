@@ -32,6 +32,7 @@ jobs:
         uses: TriPSs/conventional-changelog-action@v3
         with:
           github-token: ${{ secrets.RELEASE_PAT }}
+          skip-git-pull: "true"
           pre-commit: build/pre-commit.js
           release-count: 0
           version-file: Cargo.toml
