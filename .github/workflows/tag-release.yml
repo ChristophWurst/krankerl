@@ -1,0 +1,45 @@
+name: Tag release
+on:
+  schedule:
+    - cron: "42 10 * * 2,4"
+  workflow_dispatch:
+
+jobs:
+  tag-release:
+    name: Tag release
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/checkout@v2
+      - name: Install toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+            toolchain: stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Install Cargo Bump
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: cargo-bump
+      - name: Generate, commit and push changelog
+        id: changelog
+        uses: TriPSs/conventional-changelog-action@v3
+        with:
+          github-token: ${{ secrets.RELEASE_PAT }}
+          pre-commit: build/pre-commit.js
+          release-count: 0
+          skip-version-file: true
+      - name: Create Github Release
+        uses: actions/create-release@v1
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_PAT }}
+        with:
+          tag_name: ${{ steps.changelog.outputs.tag }}
+          release_name: ${{ steps.changelog.outputs.tag }}
+          body: ${{ steps.changelog.outputs.clean_changelog }}
