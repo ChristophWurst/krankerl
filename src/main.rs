@@ -33,7 +33,6 @@ Options:
 struct Args {
     arg_token: Option<String>,
     arg_url: Option<String>,
-    arg_version: Option<String>,
     cmd_clean: bool,
     cmd_enable: bool,
     cmd_disable: bool,
