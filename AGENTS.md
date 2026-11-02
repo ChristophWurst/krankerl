@@ -121,3 +121,8 @@ feat: add new feature
 fix: correct bug in packaging pipeline
 chore: update dependencies
 ```
+
+## Agent-generated commits, PRs and comments
+
+Do not add "Generated with", "Co-Authored-By", tool/model attribution, or similar
+advertisement lines to commit messages, PR descriptions, or PR/issue comments.
