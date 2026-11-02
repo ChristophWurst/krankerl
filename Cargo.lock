@@ -61,9 +61,9 @@ checksum = "9e1b586273c5702936fe7b7d6896644d8be71e6314cfe09d3167c95f712589e8"
 
 [[package]]
 name = "base64"
-version = "0.21.5"
+version = "0.23.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "35636a1494ede3b646cc98f74f8e62c773a38a659ebc777a2cf26b9b74171df9"
+checksum = "ac07cdecf99051d9a5238b80f35af32cdeba5b336e55d957b318b50137e18da5"
 
 [[package]]
 name = "bitflags"
@@ -607,7 +607,7 @@ dependencies = [
 name = "krankerl"
 version = "0.14.0"
 dependencies = [
- "base64 0.21.5",
+ "base64 0.23.1",
  "color-eyre",
  "composer",
  "dirs",
