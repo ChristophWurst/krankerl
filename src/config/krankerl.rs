@@ -29,8 +29,7 @@ pub fn set_github_token(token: &String) -> Result<()> {
 }
 
 fn open_config() -> Result<File> {
-    let xdg_dirs =
-        xdg::BaseDirectories::with_prefix("krankerl").wrap_err("Failed to get config path")?;
+    let xdg_dirs = xdg::BaseDirectories::with_prefix("krankerl");
     let config_path = xdg_dirs
         .place_config_file("config.json")
         .wrap_err("Failed to get config path")?;
