@@ -143,7 +143,7 @@ mod tests {
     use std::path::PathBuf;
 
     use fs_extra::dir::{copy, CopyOptions};
-    use tempdir::TempDir;
+    use tempfile::TempDir;
 
     use super::*;
 
@@ -172,7 +172,10 @@ mod tests {
         let mut src = PathBuf::from("./tests/apps");
         src.push(id);
 
-        let tmp = TempDir::new("krankerl").unwrap();
+        let tmp = tempfile::Builder::new()
+            .prefix("krankerl")
+            .tempdir()
+            .unwrap();
         let options = CopyOptions::new();
         copy(&src, tmp.path(), &options).expect("copy app files");
 
