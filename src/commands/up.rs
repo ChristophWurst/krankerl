@@ -1,6 +1,7 @@
 use std::path::PathBuf;
 use std::thread;
 
+use color_eyre::eyre::eyre;
 use color_eyre::Result;
 use composer::Composer;
 use npm_scripts::NpmScripts;
@@ -24,15 +25,13 @@ fn npm_up(app_path: &PathBuf) -> Result<()> {
     match find_npm_scripts(app_path) {
         Some(scripts) => {
             println!("Installing npm packages...");
-            scripts.install().map_err(|fail| fail.compat())?;
+            scripts.install().map_err(|fail| eyre!(fail))?;
             let has_npm_build_task = scripts
                 .has_script(&npm_script)
-                .map_err(|fail| fail.compat())?;
+                .map_err(|fail| eyre!(fail))?;
             if has_npm_build_task {
                 println!("Running npm build script...");
-                scripts
-                    .run_script(&npm_script)
-                    .map_err(|fail| fail.compat())?;
+                scripts.run_script(&npm_script).map_err(|fail| eyre!(fail))?;
                 println!("Installed npm packages and ran build script.");
             } else {
                 println!("Installed npm packages.");
@@ -50,7 +49,7 @@ fn composer_up(app_path: &PathBuf) -> Result<()> {
     let composer = Composer::new(app_path);
     if composer.is_available() {
         println!("Installing composer packages...");
-        composer.install().map_err(|fail| fail.compat())?;
+        composer.install().map_err(|fail| eyre!(fail))?;
         println!("Installed composer packages.");
     } else {
         println!("No composer config found.");

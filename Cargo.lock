@@ -33,6 +33,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "anyhow"
+version = "1.0.104"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "330a5ed07fa54e4702c9d6c4174f74427fc0ef6e214bbd677ae50a5099946470"
+
+[[package]]
 name = "autocfg"
 version = "0.1.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -174,11 +180,11 @@ dependencies = [
 
 [[package]]
 name = "composer"
-version = "0.2.1"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d80d52b2a248ca7413689b47be00746088f23316d4c66bbd6bd9b7539514a047"
+checksum = "1f6859f07d17b1e42276c477e1fd3f107ee2c6096b55794af78fbf46133c8efb"
 dependencies = [
- "failure",
+ "anyhow",
 ]
 
 [[package]]
@@ -299,28 +305,6 @@ checksum = "221239d1d5ea86bf5d6f91c9d6bc3646ffe471b08ff9b0f91c44f115ac969d2b"
 dependencies = [
  "indenter",
  "once_cell",
-]
-
-[[package]]
-name = "failure"
-version = "0.1.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d32e9bd16cc02eae7db7ef620b392808b89f6a5e16bb3497d159c6b92a0f4f86"
-dependencies = [
- "backtrace",
- "failure_derive",
-]
-
-[[package]]
-name = "failure_derive"
-version = "0.1.8"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aa4da3c766cd7a0db8242e326e9e4e081edd567072893ed320008189715366a4"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 1.0.104",
- "synstructure",
 ]
 
 [[package]]
@@ -800,11 +784,11 @@ dependencies = [
 
 [[package]]
 name = "npm_scripts"
-version = "0.2.0"
+version = "0.3.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e6e4c29bdde731d10ad74aba619204d746f4d5ed0e3f04c98f8713d2a89cf365"
+checksum = "77069b82c1ed77c1b6c1da65f576075dd460048f27f21b81b62527cc7e240d77"
 dependencies = [
- "failure",
+ "anyhow",
  "serde",
  "serde_derive",
  "serde_json",
