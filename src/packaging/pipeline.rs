@@ -7,7 +7,7 @@ use flate2::Compression;
 use ignore::{DirEntry, WalkBuilder};
 use nextcloud_appinfo::{get_appinfo, AppInfo};
 use pathdiff::diff_paths;
-use tempdir::TempDir;
+use tempfile::TempDir;
 
 use crate::config;
 use crate::packaging::commands::{self, PackageCommands};
@@ -34,7 +34,7 @@ impl App {
         println!("Cloning app");
 
         let app_info = get_appinfo(&self.source_path)?;
-        let tmp = TempDir::new("krankerl")?;
+        let tmp = tempfile::Builder::new().prefix("krankerl").tempdir()?;
         artifacts::clone_app(&self.source_path, &tmp_app_path(tmp.path(), app_info.id()))?;
 
         println!("App cloned to {:?}", tmp.path());
@@ -209,7 +209,6 @@ mod tests {
 
     use flate2::read::GzDecoder;
     use tar::Archive;
-    use tempdir::TempDir;
 
     use super::*;
 
@@ -217,7 +216,10 @@ mod tests {
     const APP_ID: &'static str = "recommendations";
 
     fn create_test_app_dir(tarball: &'static [u8]) -> TempDir {
-        let tmp = TempDir::new("krankerl-test").unwrap();
+        let tmp = tempfile::Builder::new()
+            .prefix("krankerl-test")
+            .tempdir()
+            .unwrap();
 
         let decoder = GzDecoder::new(tarball);
         let mut archive = Archive::new(decoder);
