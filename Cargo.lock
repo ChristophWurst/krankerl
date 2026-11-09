@@ -346,7 +346,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
 dependencies = [
  "libc",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -944,12 +944,12 @@ dependencies = [
 
 [[package]]
 name = "nextcloud_appinfo"
-version = "0.6.1"
+version = "0.6.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "79d06b7a929fe15fbac3fcb0d93807a93133bd9a173884700ca28ce97aa99b61"
+checksum = "b27f5a7a715ce5bd22d2428ebd302df09940093a235987e78748f3ad7d570129"
 dependencies = [
  "semver",
- "thiserror 1.0.30",
+ "thiserror 2.0.21",
  "xpath_reader",
 ]
 
@@ -1269,7 +1269,7 @@ dependencies = [
  "once_cell",
  "socket2 0.5.10",
  "tracing",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -1497,7 +1497,7 @@ dependencies = [
  "errno",
  "libc",
  "linux-raw-sys",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
@@ -1863,7 +1863,7 @@ dependencies = [
  "getrandom 0.4.3",
  "once_cell",
  "rustix",
- "windows-sys 0.61.2",
+ "windows-sys 0.52.0",
 ]
 
 [[package]]
